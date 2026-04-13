@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <title>Doctoralia Pagos — Enviar documentos (México, prototipo)</title>
+  <style>
+    :root {
+      --teal: #00b5b5;
+      --teal-hover: #009e9e;
+      --teal-dark: #007d7d;
+      --bg: #f0f3f5;
+      --card: #fff;
+      --border: #dde3e8;
+      --green-bg: #e8f7ef;
+      --green-border: #2eb872;
+      --blue-hint: #e3f2fd;
+      --blue-border: #90caf9;
+      --text-muted: #5c6570;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: #1a1a1a;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 56px;
+      flex-shrink: 0;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0;
+      gap: 0.5rem;
+    }
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--teal);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    .nav-ico {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .nav-ico:hover { background: #f0f4f6; color: var(--teal-dark); }
+    .nav-ico svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+      font-size: 1rem;
+    }
+    .layout-inner {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      max-width: 1120px;
+      align-items: flex-start;
+    }
+    @media (max-width: 900px) {
+      .layout-inner { flex-direction: column; }
+      .promo-card { width: 100% !important; max-width: none; }
+    }
+    .form-main {
+      flex: 1;
+      min-width: 0;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .page-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem;
+      color: #222;
+    }
+    .lead {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      margin: 0 0 1.25rem;
+      line-height: 1.55;
+    }
+    .section-heading {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 1.75rem 0 0.5rem;
+      color: #222;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .section-heading:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .section-lead {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin: 0 0 1rem;
+      line-height: 1.5;
+    }
+    .practices-details {
+      margin: 0 0 1.1rem;
+      border: 1px solid #d8e8e8;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #f9fdfd 0%, #f6fafb 100%);
+      box-shadow: 0 1px 2px rgba(0, 77, 77, 0.04);
+    }
+    .practices-summary {
+      list-style: none;
+      padding: 0.5rem 0.65rem 0.5rem 1.65rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      line-height: 1.35;
+    }
+    .practices-summary::-webkit-details-marker { display: none; }
+    .practices-summary::marker { content: ""; }
+    .practices-summary::before {
+      content: "";
+      position: absolute;
+      left: 0.55rem;
+      top: 50%;
+      width: 0.35rem;
+      height: 0.35rem;
+      border-right: 2px solid var(--teal);
+      border-bottom: 2px solid var(--teal);
+      transform: translateY(-65%) rotate(-45deg);
+      transition: transform 0.18s ease;
+      opacity: 0.85;
+    }
+    .practices-details[open] .practices-summary::before {
+      transform: translateY(-35%) rotate(45deg);
+    }
+    .practices-summary .muted {
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .practices-details[open] .practices-summary {
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.65);
+    }
+    .practices-inner {
+      padding: 0.65rem 0.75rem 0.75rem;
+      display: flex;
+      justify-content: center;
+      background: #fff;
+      border-radius: 0 0 9px 9px;
+    }
+    .practices-figure {
+      margin: 0;
+      max-width: 100%;
+    }
+    .practices-figure img {
+      display: block;
+      max-width: min(100%, 300px);
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 8px;
+      border: 1px solid #e8eef0;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+    .field { margin-bottom: 1.1rem; }
+    .doc-type-field { margin-bottom: 1rem; }
+    .doc-type-select {
+      width: 100%;
+      max-width: 100%;
+      padding: 0.65rem 2rem 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      background: #fff
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23007d7d' d='M6 8L1 3h10z'/%3E%3C/svg%3E")
+        no-repeat right 0.75rem center;
+      color: #1a1a1a;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .doc-type-select:focus {
+      outline: 2px solid var(--teal);
+      outline-offset: 1px;
+    }
+    .doc-type-hint {
+      margin: 0.45rem 0 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .doc-upload-panel {
+      margin-top: 0.25rem;
+      padding-top: 0.35rem;
+      border-top: 1px dashed #d0dce0;
+    }
+    .doc-upload-panel[hidden] {
+      display: none !important;
+    }
+    .field-label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.8125rem;
+      margin-bottom: 0.4rem;
+      color: #333;
+    }
+    .upload-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: stretch;
+    }
+    .filename-display {
+      flex: 1 1 200px;
+      min-height: 2.65rem;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      background: #fff;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .filename-display.has-file { color: #1a1a1a; }
+    .thumb {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .thumb-pdf {
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: #f0f4f6;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #555;
+      flex-shrink: 0;
+    }
+    .btn-attach,
+    .btn-cam {
+      padding: 0.55rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+    }
+    .btn-attach {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: #333;
+    }
+    .btn-attach:hover { background: #f8fafb; }
+    .btn-attach input { display: none; }
+    .btn-cam {
+      background: #fff;
+      border: 1px solid var(--teal);
+      color: var(--teal-dark);
+    }
+    .btn-cam:hover { background: #e6f9f9; }
+    .info-blue {
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--blue-hint);
+      border: 1px solid var(--blue-border);
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      color: #1565c0;
+    }
+    .req-doc-lead {
+      margin: 0.35rem 0 0.5rem;
+      font-size: 0.8125rem;
+      line-height: 1.45;
+    }
+    .info-blue ul { margin: 0.5rem 0 0; padding-left: 1.1rem; }
+    .info-blue li { margin-bottom: 0.35rem; }
+    .btn-submit {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.75rem;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--teal-hover); }
+    .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+    .legal {
+      margin-top: 1rem;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .promo-card {
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .promo-card h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      color: var(--teal-dark);
+    }
+    .promo-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.8125rem;
+      color: #444;
+    }
+    .promo-card li { margin-bottom: 0.5rem; }
+    .promo-fee {
+      margin-top: 0.75rem;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+    .source-footer {
+      padding: 0.5rem 1.5rem 1rem 5rem;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+    .source-footer a { color: var(--teal-dark); }
+    code { background: rgba(0,0,0,.06); padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: 12px;
+      max-width: 520px;
+      width: 100%;
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 50px rgba(0,0,0,.2);
+    }
+    .modal h3 { margin: 0 0 0.75rem; font-size: 1.05rem; color: #222; }
+    .modal video,
+    .modal .preview-img {
+      width: 100%;
+      border-radius: 8px;
+      background: #0f172a;
+      display: block;
+      max-height: 50vh;
+      object-fit: contain;
+    }
+    .modal .preview-img { background: #f1f5f9; }
+    .modal-hint { font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.5rem; min-height: 2.5em; }
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      justify-content: flex-end;
+    }
+    .modal-actions button {
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #333;
+    }
+    .modal-actions button.primary {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+    }
+    .modal-actions button.primary:hover { background: var(--teal-hover); }
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1e293b;
+      color: #fff;
+      padding: 0.65rem 1.15rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      z-index: 1100;
+      opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 90vw;
+      text-align: center;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Menú principal">
+      <div class="sidebar-logo" aria-hidden="true">D</div>
+      <button type="button" class="nav-ico" aria-label="Inicio" title="Inicio">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </button>
+      <button type="button" class="nav-ico" aria-label="Agenda" title="Agenda">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </button>
+      <button type="button" class="nav-ico" aria-label="Análisis" title="Análisis">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </button>
+      <button type="button" class="nav-ico" aria-label="Perfil" title="Perfil">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">Doctoralia Pagos</header>
+      <div class="layout-inner">
+        <main class="form-main">
+          <h1 class="page-title">Envíe sus documentos</h1>
+          <p class="lead">
+            Para confirmar su identidad necesitamos <strong>un documento oficial con foto</strong>: credencial INE o licencia de conducir.
+            Además debe adjuntar su <strong>Constancia de Situación Fiscal (CSF)</strong> del SAT.
+            En cada caso puede <strong>subir un archivo</strong> o <strong>tomar una foto</strong> desde el teléfono o la computadora.
+          </p>
+
+          <h2 class="section-heading">1. Identidad (INE o licencia)</h2>
+          <p class="section-lead">Elija un solo tipo de identificación y cargue anverso y reverso.</p>
+
+          <div class="field doc-type-field">
+            <label class="field-label" for="doc-type">Tipo de documento de identidad</label>
+            <select id="doc-type" class="doc-type-select" aria-controls="doc-upload-panel" autocomplete="off">
+              <option value="">Seleccione el tipo de documento…</option>
+              <option value="ine">Credencial para votar (INE/IFE)</option>
+              <option value="licencia">Licencia de conducir</option>
+            </select>
+            <p class="doc-type-hint">Después de elegir el tipo verá los campos de anverso, reverso y las recomendaciones de imagen.</p>
+          </div>
+
+          <div id="doc-upload-panel" class="doc-upload-panel" hidden>
+            <details class="practices-details">
+              <summary class="practices-summary">
+                Recomendaciones para las imágenes
+                <span class="muted"> — toque o haga clic para ver el ejemplo</span>
+              </summary>
+              <div class="practices-inner">
+                <figure class="practices-figure">
+                  <img
+                    src="assets/mx-recomendaciones-imagenes.png"
+                    alt="Recomendaciones: ejemplo aceptado y rechazado, documento completo visible, validez y fotos originales."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </figure>
+              </div>
+            </details>
+
+            <div class="field">
+              <span class="field-label" id="label-front">Anverso</span>
+              <div class="upload-row" data-side="front">
+                <div class="filename-display" id="display-front" aria-labelledby="label-front" aria-live="polite">Ningún archivo seleccionado</div>
+                <label class="btn-attach">
+                  <input type="file" accept="image/jpeg,image/png,application/pdf" data-input="front" />
+                  Seleccionar archivo
+                </label>
+                <button type="button" class="btn-cam" data-camera="front">Tomar foto</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="field-label" id="label-back">Reverso</span>
+              <div class="upload-row" data-side="back">
+                <div class="filename-display" id="display-back" aria-labelledby="label-back" aria-live="polite">Ningún archivo seleccionado</div>
+                <label class="btn-attach">
+                  <input type="file" accept="image/jpeg,image/png,application/pdf" data-input="back" />
+                  Seleccionar archivo
+                </label>
+                <button type="button" class="btn-cam" data-camera="back">Tomar foto</button>
+              </div>
+            </div>
+
+            <div class="info-blue" role="note">
+              <strong>Requisitos del documento de identidad</strong>
+              <p id="req-doc-lead" class="req-doc-lead"></p>
+              <ul>
+                <li>El documento debe estar vigente; recomendamos al menos <strong>tres meses</strong> de validez a partir de hoy.</li>
+                <li>Use <strong>fotos originales</strong> del documento físico, no capturas de pantalla.</li>
+                <li>Formatos: JPEG, PNG y PDF (subida). Las fotos con la cámara se guardan como JPEG.</li>
+                <li>Resolución mínima recomendada: 600×600 px; el prototipo avisa si la captura es menor.</li>
+                <li>Tamaño máximo: 10 MB por archivo.</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2 class="section-heading">2. Constancia de Situación Fiscal (CSF)</h2>
+          <p class="section-lead">
+            Suba el PDF o una foto clara de la constancia emitida por el SAT. Misma opción: archivo o cámara.
+          </p>
+
+          <details class="practices-details">
+            <summary class="practices-summary">
+              Recomendaciones para las imágenes
+              <span class="muted"> — misma guía para credencial y constancia</span>
+            </summary>
+            <div class="practices-inner">
+              <figure class="practices-figure">
+                <img
+                  src="assets/mx-recomendaciones-imagenes.png"
+                  alt="Recomendaciones para fotos de documentos."
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+            </div>
+          </details>
+
+          <div class="field">
+            <span class="field-label" id="label-csf">Archivo de la constancia</span>
+            <div class="upload-row" data-side="csf">
+              <div class="filename-display" id="display-csf" aria-labelledby="label-csf" aria-live="polite">Ningún archivo seleccionado</div>
+              <label class="btn-attach">
+                <input type="file" accept="image/jpeg,image/png,application/pdf" data-input="csf" />
+                Seleccionar archivo
+              </label>
+              <button type="button" class="btn-cam" data-camera="csf">Tomar foto</button>
+            </div>
+          </div>
+
+          <div class="info-blue" role="note">
+            <strong>Requisitos de la CSF</strong>
+            <ul>
+              <li>Preferible el <strong>PDF oficial</strong> del SAT; si fotografía el documento impreso, que se lea el RFC y los datos completos.</li>
+              <li>No use capturas de pantalla de terceros; adjunte su constancia actual.</li>
+              <li>Mismo límite de 10 MB; JPEG, PNG o PDF.</li>
+            </ul>
+          </div>
+
+          <button type="button" class="btn-submit" id="btn-send" disabled>Enviar documentos</button>
+
+          <p class="legal">
+            Prototipo de UX — la cámara usa la API de medios del navegador (<code>getUserMedia</code>).
+            En producción los archivos irían al backend o al socio de verificación. Se requiere HTTPS (o localhost) para que la cámara funcione.
+          </p>
+        </main>
+
+        <aside class="promo-card" aria-label="Beneficios">
+          <h3>¿Por qué verificar la cuenta?</h3>
+          <ul>
+            <li>Cumplimiento fiscal y de identidad para recibir pagos en México.</li>
+            <li>Menos fricción para sus pacientes al pagar en línea.</li>
+            <li>Datos alineados con el SAT y con el operador de pagos.</li>
+          </ul>
+          <p class="promo-fee">Comisión de servicio: ejemplo ilustrativo (consulte condiciones vigentes).</p>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <p class="source-footer">
+    Prototipo <strong>MX</strong> — INE o licencia (anverso/reverso) + <strong>CSF</strong>; subida o cámara.
+    Archivo local: <code>prototype/doctoralia-mx-kyc-document-upload-camera.html</code>.
+    Publicado: <a href="https://annamariakrol.github.io/dlocal/mx/" target="_blank" rel="noopener">annamariakrol.github.io/dlocal/mx/</a>.
+    <strong>Versión 2026-04-13-b</strong>. <em>Recarga forzada</em>: Cmd+Shift+R / Ctrl+F5.
+  </p>
+  <p class="source-footer">
+    Prototipo BR (referencia): <a href="https://annamariakrol.github.io/dlocal/" target="_blank" rel="noopener">annamariakrol.github.io/dlocal</a>
+  </p>
+
+  <div class="modal-backdrop" id="camera-modal" role="dialog" aria-modal="true" aria-labelledby="camera-title" hidden>
+    <div class="modal">
+      <h3 id="camera-title">Tomar foto del documento</h3>
+      <video id="camera-video" playsinline autoplay muted></video>
+      <img id="camera-preview" class="preview-img" alt="Vista previa" hidden />
+      <p class="modal-hint" id="camera-hint"></p>
+      <div class="modal-actions">
+        <button type="button" id="camera-cancel">Cancelar</button>
+        <button type="button" id="camera-retake" hidden>Nueva foto</button>
+        <button type="button" class="primary" id="camera-capture">Capturar</button>
+        <button type="button" class="primary" id="camera-use" hidden>Usar esta foto</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (function () {
+      const DOC_LABELS = {
+        ine: {
+          front: "Anverso de la credencial INE",
+          back: "Reverso de la credencial INE",
+          req: "Envíe el anverso y el reverso nítidos de su credencial para votar (INE/IFE).",
+        },
+        licencia: {
+          front: "Anverso de la licencia de conducir",
+          back: "Reverso de la licencia de conducir",
+          req: "Envíe el anverso y el reverso nítidos de su licencia de conducir.",
+        },
+      };
+
+      const DISPLAY_IDS = { front: "display-front", back: "display-back", csf: "display-csf" };
+
+      const emptyLabel = {
+        front: "Ningún archivo seleccionado",
+        back: "Ningún archivo seleccionado",
+        csf: "Ningún archivo seleccionado",
+      };
+
+      const state = {
+        front: { file: null, objectUrl: null, thumbUrl: null, name: "", source: null },
+        back: { file: null, objectUrl: null, thumbUrl: null, name: "", source: null },
+        csf: { file: null, objectUrl: null, thumbUrl: null, name: "", source: null },
+      };
+      let cameraSide = null;
+      let stream = null;
+      let capturedBlob = null;
+      let selectedDocType = "";
+
+      const docTypeEl = document.getElementById("doc-type");
+      const uploadPanel = document.getElementById("doc-upload-panel");
+      const labelFront = document.getElementById("label-front");
+      const labelBack = document.getElementById("label-back");
+      const reqDocLead = document.getElementById("req-doc-lead");
+
+      const modal = document.getElementById("camera-modal");
+      const video = document.getElementById("camera-video");
+      const preview = document.getElementById("camera-preview");
+      const hint = document.getElementById("camera-hint");
+      const btnCancel = document.getElementById("camera-cancel");
+      const btnCapture = document.getElementById("camera-capture");
+      const btnRetake = document.getElementById("camera-retake");
+      const btnUse = document.getElementById("camera-use");
+      const btnSend = document.getElementById("btn-send");
+      const toastEl = document.getElementById("toast");
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () {
+          toastEl.classList.remove("show");
+        }, 3200);
+      }
+
+      function revokeSide(side) {
+        const s = state[side];
+        const u = s.objectUrl;
+        if (u) URL.revokeObjectURL(u);
+        if (s.thumbUrl && s.thumbUrl !== u) URL.revokeObjectURL(s.thumbUrl);
+        s.objectUrl = null;
+        s.thumbUrl = null;
+        s.file = null;
+        s.name = "";
+        s.source = null;
+      }
+
+      function updateDisplay(side) {
+        const s = state[side];
+        const el = document.getElementById(DISPLAY_IDS[side]);
+        el.classList.toggle("has-file", !!s.file);
+        el.innerHTML = "";
+        if (!s.file) {
+          el.textContent = emptyLabel[side];
+          return;
+        }
+        if (s.thumbUrl && s.file.type.startsWith("image/")) {
+          const img = document.createElement("img");
+          img.className = "thumb";
+          img.src = s.thumbUrl;
+          img.alt = "";
+          el.appendChild(img);
+        } else {
+          const span = document.createElement("span");
+          span.className = "thumb-pdf";
+          span.textContent = "PDF";
+          el.appendChild(span);
+        }
+        const label = document.createElement("span");
+        label.textContent = s.name + (s.source === "camera" ? " (cámara)" : " (archivo)");
+        el.appendChild(label);
+      }
+
+      function updateSubmit() {
+        const idReady =
+          !!selectedDocType && uploadPanel && !uploadPanel.hidden && state.front.file && state.back.file;
+        const csfReady = !!state.csf.file;
+        btnSend.disabled = !(idReady && csfReady);
+      }
+
+      function clearIdUploads() {
+        revokeSide("front");
+        revokeSide("back");
+        updateDisplay("front");
+        updateDisplay("back");
+        document.querySelectorAll('input[type="file"][data-input="front"], input[type="file"][data-input="back"]').forEach(function (inp) {
+          inp.value = "";
+        });
+        updateSubmit();
+      }
+
+      function applyDocType(type) {
+        selectedDocType = type || "";
+        if (!type || !DOC_LABELS[type]) {
+          uploadPanel.hidden = true;
+          reqDocLead.textContent = "";
+          clearIdUploads();
+          if (modal.classList.contains("open")) closeModal();
+          updateSubmit();
+          return;
+        }
+        uploadPanel.hidden = false;
+        const L = DOC_LABELS[type];
+        labelFront.textContent = L.front;
+        labelBack.textContent = L.back;
+        reqDocLead.textContent = L.req;
+        clearIdUploads();
+      }
+
+      docTypeEl.addEventListener("change", function () {
+        applyDocType(docTypeEl.value);
+      });
+
+      function setFile(side, file, source) {
+        revokeSide(side);
+        const s = state[side];
+        s.file = file;
+        s.name = file.name;
+        s.source = source;
+        s.objectUrl = URL.createObjectURL(file);
+        s.thumbUrl = file.type.startsWith("image/") ? s.objectUrl : null;
+        updateDisplay(side);
+        updateSubmit();
+      }
+
+      document.querySelectorAll('input[type="file"]').forEach(function (input) {
+        input.addEventListener("change", function () {
+          const side = input.dataset.input;
+          const f = input.files && input.files[0];
+          if (!f) return;
+          if (f.size > 10 * 1024 * 1024) {
+            showToast("El archivo supera 10 MB.");
+            input.value = "";
+            return;
+          }
+          setFile(side, f, "upload");
+          input.value = "";
+        });
+      });
+
+      function stopCamera() {
+        if (stream) {
+          stream.getTracks().forEach(function (t) { t.stop(); });
+          stream = null;
+        }
+        video.srcObject = null;
+      }
+
+      function cameraTitleForSide(side) {
+        if (side === "csf") return "Foto — Constancia de Situación Fiscal";
+        if (side === "front") {
+          return selectedDocType === "licencia"
+            ? "Foto — anverso de la licencia"
+            : "Foto — anverso de la credencial INE";
+        }
+        return selectedDocType === "licencia"
+          ? "Foto — reverso de la licencia"
+          : "Foto — reverso de la credencial INE";
+      }
+
+      function openModal(side) {
+        if (side !== "csf" && (!selectedDocType || uploadPanel.hidden)) {
+          showToast("Primero elija el tipo de documento de identidad.");
+          return;
+        }
+        cameraSide = side;
+        modal.hidden = false;
+        modal.classList.add("open");
+        preview.hidden = true;
+        video.hidden = false;
+        btnCapture.hidden = false;
+        btnRetake.hidden = true;
+        btnUse.hidden = true;
+        capturedBlob = null;
+        hint.textContent = "";
+        document.getElementById("camera-title").textContent = cameraTitleForSide(side);
+
+        navigator.mediaDevices
+          .getUserMedia({
+            video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+            audio: false,
+          })
+          .then(function (s) {
+            stream = s;
+            video.srcObject = s;
+          })
+          .catch(function () {
+            showToast("No fue posible acceder a la cámara. Permita el acceso o use «Seleccionar archivo».");
+            closeModal();
+          });
+      }
+
+      function closeModal() {
+        stopCamera();
+        modal.classList.remove("open");
+        modal.hidden = true;
+        cameraSide = null;
+        preview.removeAttribute("src");
+      }
+
+      document.querySelectorAll("[data-camera]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          openModal(btn.dataset.camera);
+        });
+      });
+
+      btnCancel.addEventListener("click", closeModal);
+
+      btnCapture.addEventListener("click", function () {
+        if (!stream || !cameraSide) return;
+        const w = video.videoWidth;
+        const h = video.videoHeight;
+        if (!w || !h) {
+          showToast("Espere a que cargue el video.");
+          return;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+        canvas.toBlob(
+          function (blob) {
+            if (!blob) return;
+            capturedBlob = blob;
+            preview.src = URL.createObjectURL(blob);
+            preview.hidden = false;
+            video.hidden = true;
+            btnCapture.hidden = true;
+            btnRetake.hidden = false;
+            btnUse.hidden = false;
+            stopCamera();
+            hint.textContent =
+              w < 600 || h < 600
+                ? "Aviso: " + w + "×" + h + " px — por debajo del mínimo recomendado (600×600)."
+                : "Resolución: " + w + "×" + h + " px.";
+          },
+          "image/jpeg",
+          0.92
+        );
+      });
+
+      btnRetake.addEventListener("click", function () {
+        const side = cameraSide;
+        if (preview.src) URL.revokeObjectURL(preview.src);
+        preview.hidden = true;
+        preview.removeAttribute("src");
+        btnRetake.hidden = true;
+        btnUse.hidden = true;
+        btnCapture.hidden = false;
+        hint.textContent = "";
+        capturedBlob = null;
+        if (side) openModal(side);
+      });
+
+      btnUse.addEventListener("click", function () {
+        if (!capturedBlob || !cameraSide) return;
+        const sideUsed = cameraSide;
+        var prefix = sideUsed === "csf" ? "constancia" : "identidad";
+        const name = prefix + "-" + sideUsed + "-" + Date.now() + ".jpg";
+        const file = new File([capturedBlob], name, { type: "image/jpeg" });
+        if (file.size > 10 * 1024 * 1024) {
+          showToast("Imagen demasiado grande; intente otra captura.");
+          return;
+        }
+        setFile(sideUsed, file, "camera");
+        if (preview.src) URL.revokeObjectURL(preview.src);
+        preview.removeAttribute("src");
+        closeModal();
+        var part =
+          sideUsed === "csf"
+            ? "constancia"
+            : sideUsed === "front"
+              ? "anverso"
+              : "reverso";
+        showToast("Foto aplicada — " + part + ".");
+      });
+
+      btnSend.addEventListener("click", function () {
+        var opt = docTypeEl.options[docTypeEl.selectedIndex];
+        var name = opt ? opt.text.trim() : "";
+        showToast(
+          "Prototipo: " +
+            name +
+            " + CSF listos. En producción se enviarían al backend / socio KYC."
+        );
+      });
+
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeModal();
+      });
+    })();
+  </script>
+</body>
+</html>
