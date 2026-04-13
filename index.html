@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <title>Doctoralia Pagamentos — Enviar documentos (protótipo)</title>
+  <style>
+    :root {
+      --teal: #00b5b5;
+      --teal-hover: #009e9e;
+      --teal-dark: #007d7d;
+      --bg: #f0f3f5;
+      --card: #fff;
+      --border: #dde3e8;
+      --green-bg: #e8f7ef;
+      --green-border: #2eb872;
+      --blue-hint: #e3f2fd;
+      --blue-border: #90caf9;
+      --text-muted: #5c6570;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: #1a1a1a;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 56px;
+      flex-shrink: 0;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0;
+      gap: 0.5rem;
+    }
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--teal);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    .nav-ico {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .nav-ico:hover { background: #f0f4f6; color: var(--teal-dark); }
+    .nav-ico svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+      font-size: 1rem;
+    }
+    .layout-inner {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      max-width: 1120px;
+      align-items: flex-start;
+    }
+    @media (max-width: 900px) {
+      .layout-inner { flex-direction: column; }
+      .promo-card { width: 100% !important; max-width: none; }
+    }
+    .form-main {
+      flex: 1;
+      min-width: 0;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .page-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem;
+      color: #222;
+    }
+    .lead {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      margin: 0 0 1.25rem;
+      line-height: 1.55;
+    }
+    .practices-details {
+      margin: 0 0 1.1rem;
+      border: 1px solid #d8e8e8;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #f9fdfd 0%, #f6fafb 100%);
+      box-shadow: 0 1px 2px rgba(0, 77, 77, 0.04);
+    }
+    .practices-summary {
+      list-style: none;
+      padding: 0.5rem 0.65rem 0.5rem 1.65rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      line-height: 1.35;
+    }
+    .practices-summary::-webkit-details-marker { display: none; }
+    .practices-summary::marker { content: ""; }
+    .practices-summary::before {
+      content: "";
+      position: absolute;
+      left: 0.55rem;
+      top: 50%;
+      width: 0.35rem;
+      height: 0.35rem;
+      border-right: 2px solid var(--teal);
+      border-bottom: 2px solid var(--teal);
+      transform: translateY(-65%) rotate(-45deg);
+      transition: transform 0.18s ease;
+      opacity: 0.85;
+    }
+    .practices-details[open] .practices-summary::before {
+      transform: translateY(-35%) rotate(45deg);
+    }
+    .practices-summary .muted {
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .practices-details[open] .practices-summary {
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.65);
+    }
+    .practices-inner {
+      padding: 0.65rem 0.75rem 0.75rem;
+      display: flex;
+      justify-content: center;
+      background: #fff;
+      border-radius: 0 0 9px 9px;
+    }
+    .practices-figure {
+      margin: 0;
+      max-width: 100%;
+    }
+    .practices-figure img {
+      display: block;
+      max-width: min(100%, 300px);
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 8px;
+      border: 1px solid #e8eef0;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+    .field { margin-bottom: 1.1rem; }
+    .doc-type-field { margin-bottom: 1rem; }
+    .doc-type-select {
+      width: 100%;
+      max-width: 100%;
+      padding: 0.65rem 2rem 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      background: #fff
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23007d7d' d='M6 8L1 3h10z'/%3E%3C/svg%3E")
+        no-repeat right 0.75rem center;
+      color: #1a1a1a;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .doc-type-select:focus {
+      outline: 2px solid var(--teal);
+      outline-offset: 1px;
+    }
+    .doc-type-hint {
+      margin: 0.45rem 0 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .doc-upload-panel {
+      margin-top: 0.25rem;
+      padding-top: 0.35rem;
+      border-top: 1px dashed #d0dce0;
+    }
+    .doc-upload-panel[hidden] {
+      display: none !important;
+    }
+    .field-label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.8125rem;
+      margin-bottom: 0.4rem;
+      color: #333;
+    }
+    .upload-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: stretch;
+    }
+    .filename-display {
+      flex: 1 1 200px;
+      min-height: 2.65rem;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      background: #fff;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .filename-display.has-file { color: #1a1a1a; }
+    .thumb {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .thumb-pdf {
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: #f0f4f6;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #555;
+      flex-shrink: 0;
+    }
+    .btn-attach,
+    .btn-cam {
+      padding: 0.55rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+    }
+    .btn-attach {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: #333;
+    }
+    .btn-attach:hover { background: #f8fafb; }
+    .btn-attach input { display: none; }
+    .btn-cam {
+      background: #fff;
+      border: 1px solid var(--teal);
+      color: var(--teal-dark);
+    }
+    .btn-cam:hover { background: #e6f9f9; }
+    .info-blue {
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--blue-hint);
+      border: 1px solid var(--blue-border);
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      color: #1565c0;
+    }
+    .req-doc-lead {
+      margin: 0.35rem 0 0.5rem;
+      font-size: 0.8125rem;
+      line-height: 1.45;
+    }
+    .info-blue ul { margin: 0.5rem 0 0; padding-left: 1.1rem; }
+    .info-blue li { margin-bottom: 0.35rem; }
+    .btn-submit {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.25rem;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--teal-hover); }
+    .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+    .legal {
+      margin-top: 1rem;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .promo-card {
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .promo-card h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      color: var(--teal-dark);
+    }
+    .promo-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.8125rem;
+      color: #444;
+    }
+    .promo-card li { margin-bottom: 0.5rem; }
+    .promo-fee {
+      margin-top: 0.75rem;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+    .source-footer {
+      padding: 0.5rem 1.5rem 1rem 5rem;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+    .source-footer a { color: var(--teal-dark); }
+    code { background: rgba(0,0,0,.06); padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: 12px;
+      max-width: 520px;
+      width: 100%;
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 50px rgba(0,0,0,.2);
+    }
+    .modal h3 { margin: 0 0 0.75rem; font-size: 1.05rem; color: #222; }
+    .modal video,
+    .modal .preview-img {
+      width: 100%;
+      border-radius: 8px;
+      background: #0f172a;
+      display: block;
+      max-height: 50vh;
+      object-fit: contain;
+    }
+    .modal .preview-img { background: #f1f5f9; }
+    .modal-hint { font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.5rem; min-height: 2.5em; }
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      justify-content: flex-end;
+    }
+    .modal-actions button {
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #333;
+    }
+    .modal-actions button.primary {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+    }
+    .modal-actions button.primary:hover { background: var(--teal-hover); }
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1e293b;
+      color: #fff;
+      padding: 0.65rem 1.15rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      z-index: 1100;
+      opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 90vw;
+      text-align: center;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Menu principal">
+      <div class="sidebar-logo" aria-hidden="true">D</div>
+      <button type="button" class="nav-ico" aria-label="Início" title="Início">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </button>
+      <button type="button" class="nav-ico" aria-label="Agenda" title="Agenda">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </button>
+      <button type="button" class="nav-ico" aria-label="Análises" title="Análises">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </button>
+      <button type="button" class="nav-ico" aria-label="Perfil" title="Perfil">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">Doctoralia Pagamentos</header>
+      <div class="layout-inner">
+        <main class="form-main">
+          <h1 class="page-title">Envie seus documentos</h1>
+          <p class="lead">
+            Esta etapa faz parte da verificação da conta para confirmar identidade e atividade comercial.
+            Primeiro escolha o <strong>tipo de documento</strong>; em seguida envie a <strong>frente e o verso</strong> por arquivo ou pela <strong>câmera</strong> do celular ou computador.
+          </p>
+
+          <div class="field doc-type-field">
+            <label class="field-label" for="doc-type">Tipo de documento</label>
+            <select id="doc-type" class="doc-type-select" aria-controls="doc-upload-panel" autocomplete="off">
+              <option value="">Selecione o tipo de documento…</option>
+              <option value="identidade">Documento de identidade (ex.: RG)</option>
+              <option value="cnh">Carteira de motorista (CNH)</option>
+            </select>
+            <p class="doc-type-hint">Só depois desta escolha aparecem os campos de frente, verso e dicas de foto.</p>
+          </div>
+
+          <div id="doc-upload-panel" class="doc-upload-panel" hidden>
+            <details class="practices-details">
+              <summary class="practices-summary">
+                Melhores práticas para imagens
+                <span class="muted"> — toque ou clique para ver o exemplo</span>
+              </summary>
+              <div class="practices-inner">
+                <figure class="practices-figure">
+                  <img
+                    src="assets/melhores-praticas-instrucao.png"
+                    alt="Melhores práticas para imagens: exemplos aprovado e reprovado, validade do documento, fotos originais."
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </figure>
+              </div>
+            </details>
+
+            <div class="field">
+              <span class="field-label" id="label-front">Frente</span>
+              <div class="upload-row" data-side="front">
+                <div class="filename-display" id="display-front" aria-labelledby="label-front" aria-live="polite">Nenhum arquivo selecionado</div>
+                <label class="btn-attach">
+                  <input type="file" accept="image/jpeg,image/png,application/pdf" data-input="front" />
+                  Selecionar arquivo
+                </label>
+                <button type="button" class="btn-cam" data-camera="front">Tirar foto</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="field-label" id="label-back">Verso</span>
+              <div class="upload-row" data-side="back">
+                <div class="filename-display" id="display-back" aria-labelledby="label-back" aria-live="polite">Nenhum arquivo selecionado</div>
+                <label class="btn-attach">
+                  <input type="file" accept="image/jpeg,image/png,application/pdf" data-input="back" />
+                  Selecionar arquivo
+                </label>
+                <button type="button" class="btn-cam" data-camera="back">Tirar foto</button>
+              </div>
+            </div>
+
+            <div class="info-blue" role="note">
+              <strong>Requisitos</strong>
+              <p id="req-doc-lead" class="req-doc-lead"></p>
+              <ul>
+                <li>Formatos: JPEG, PNG e PDF (upload). Fotos pela câmera são gravadas como JPEG.</li>
+                <li>Resolução mínima recomendada: 600×600 px — o protótipo avisa se a captura for menor.</li>
+                <li>Tamanho máximo: 10 MB por arquivo.</li>
+                <li>Impressões de documento digital podem ser recusadas; prefira foto do documento físico.</li>
+              </ul>
+            </div>
+
+            <button type="button" class="btn-submit" id="btn-send" disabled>Enviar</button>
+          </div>
+
+          <p class="legal">
+            Protótipo de UX — captura no navegador usa a API de mídia do dispositivo (<code>getUserMedia</code>).
+            Em produção, os ficheiros seguiriam para o backend / parceiro de verificação. Requer HTTPS (ou localhost) para a câmera funcionar.
+          </p>
+        </main>
+
+        <aside class="promo-card" aria-label="Benefícios">
+          <h3>Por que vale a pena ativar os Pagamentos?</h3>
+          <ul>
+            <li>Mais visibilidade para o seu perfil e serviços pagos online.</li>
+            <li>Recebimento em conta bancária (BRL), com fluxo claro para o paciente.</li>
+            <li>Menos atrito na hora do pagamento e melhor experiência no agendamento.</li>
+          </ul>
+          <p class="promo-fee">Taxa de serviço: 2,99% por transação (exemplo ilustrativo).</p>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <p class="source-footer">Protótipo BR — <strong>tipo de documento</strong> (select) antes de frente/verso; instruções em <strong>&lt;details&gt;</strong>. Publicado no repositório <a href="https://github.com/annamariakrol/dlocal" target="_blank" rel="noopener"><code>dlocal</code></a>: <a href="https://annamariakrol.github.io/dlocal/">annamariakrol.github.io/dlocal</a>. <strong>Versão 2026-04-10-d</strong>. <em>Hard refresh</em>: Cmd+Shift+R / Ctrl+F5.</p>
+  <p class="source-footer">Onboarding BR: <a href="https://annamariakrol.github.io/brazil-payout-bank-prototype/" target="_blank" rel="noopener"><strong>Abrir — Confirmar dados</strong></a> · repasses / settings: <a href="https://annamariakrol.github.io/brazil-payout-bank-prototype/payouts-settings.html" target="_blank" rel="noopener"><strong>Abrir — Configuração de pagamentos</strong></a> · arquivo local: <code>prototype/doctoralia-kyc-document-upload-camera.html</code></p>
+
+  <div class="modal-backdrop" id="camera-modal" role="dialog" aria-modal="true" aria-labelledby="camera-title" hidden>
+    <div class="modal">
+      <h3 id="camera-title">Tirar foto do documento</h3>
+      <video id="camera-video" playsinline autoplay muted></video>
+      <img id="camera-preview" class="preview-img" alt="Pré-visualização" hidden />
+      <p class="modal-hint" id="camera-hint"></p>
+      <div class="modal-actions">
+        <button type="button" id="camera-cancel">Cancelar</button>
+        <button type="button" id="camera-retake" hidden>Nova foto</button>
+        <button type="button" class="primary" id="camera-capture">Capturar</button>
+        <button type="button" class="primary" id="camera-use" hidden>Usar esta foto</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (function () {
+      const DOC_LABELS = {
+        identidade: {
+          front: "Frente do documento de identidade",
+          back: "Verso do documento de identidade",
+          req: "Envie frente e verso nítidos do documento de identidade (ex.: RG).",
+        },
+        cnh: {
+          front: "Frente da carteira de motorista (CNH)",
+          back: "Verso da carteira de motorista (CNH)",
+          req: "Envie frente e verso nítidos da CNH.",
+        },
+      };
+
+      const state = {
+        front: { file: null, objectUrl: null, thumbUrl: null, name: "", source: null },
+        back: { file: null, objectUrl: null, thumbUrl: null, name: "", source: null },
+      };
+      let cameraSide = null;
+      let stream = null;
+      let capturedBlob = null;
+      let selectedDocType = "";
+
+      const docTypeEl = document.getElementById("doc-type");
+      const uploadPanel = document.getElementById("doc-upload-panel");
+      const labelFront = document.getElementById("label-front");
+      const labelBack = document.getElementById("label-back");
+      const reqDocLead = document.getElementById("req-doc-lead");
+
+      const modal = document.getElementById("camera-modal");
+      const video = document.getElementById("camera-video");
+      const preview = document.getElementById("camera-preview");
+      const hint = document.getElementById("camera-hint");
+      const btnCancel = document.getElementById("camera-cancel");
+      const btnCapture = document.getElementById("camera-capture");
+      const btnRetake = document.getElementById("camera-retake");
+      const btnUse = document.getElementById("camera-use");
+      const btnSend = document.getElementById("btn-send");
+      const toastEl = document.getElementById("toast");
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () {
+          toastEl.classList.remove("show");
+        }, 3200);
+      }
+
+      function revokeSide(side) {
+        const s = state[side];
+        const u = s.objectUrl;
+        if (u) URL.revokeObjectURL(u);
+        if (s.thumbUrl && s.thumbUrl !== u) URL.revokeObjectURL(s.thumbUrl);
+        s.objectUrl = null;
+        s.thumbUrl = null;
+        s.file = null;
+        s.name = "";
+        s.source = null;
+      }
+
+      function updateDisplay(side) {
+        const s = state[side];
+        const el = document.getElementById(side === "front" ? "display-front" : "display-back");
+        el.classList.toggle("has-file", !!s.file);
+        el.innerHTML = "";
+        if (!s.file) {
+          el.textContent = "Nenhum arquivo selecionado";
+          return;
+        }
+        if (s.thumbUrl && s.file.type.startsWith("image/")) {
+          const img = document.createElement("img");
+          img.className = "thumb";
+          img.src = s.thumbUrl;
+          img.alt = "";
+          el.appendChild(img);
+        } else {
+          const span = document.createElement("span");
+          span.className = "thumb-pdf";
+          span.textContent = "PDF";
+          el.appendChild(span);
+        }
+        const label = document.createElement("span");
+        label.textContent = s.name + (s.source === "camera" ? " (câmera)" : " (arquivo)");
+        el.appendChild(label);
+      }
+
+      function updateSubmit() {
+        const ready =
+          !!selectedDocType && uploadPanel && !uploadPanel.hidden && state.front.file && state.back.file;
+        btnSend.disabled = !ready;
+      }
+
+      function clearAllUploads() {
+        revokeSide("front");
+        revokeSide("back");
+        updateDisplay("front");
+        updateDisplay("back");
+        document.querySelectorAll('input[type="file"][data-input]').forEach(function (inp) {
+          inp.value = "";
+        });
+        updateSubmit();
+      }
+
+      function applyDocType(type) {
+        selectedDocType = type || "";
+        if (!type || !DOC_LABELS[type]) {
+          uploadPanel.hidden = true;
+          reqDocLead.textContent = "";
+          clearAllUploads();
+          if (modal.classList.contains("open")) closeModal();
+          return;
+        }
+        uploadPanel.hidden = false;
+        const L = DOC_LABELS[type];
+        labelFront.textContent = L.front;
+        labelBack.textContent = L.back;
+        reqDocLead.textContent = L.req;
+        clearAllUploads();
+      }
+
+      docTypeEl.addEventListener("change", function () {
+        applyDocType(docTypeEl.value);
+      });
+
+      function setFile(side, file, source) {
+        revokeSide(side);
+        const s = state[side];
+        s.file = file;
+        s.name = file.name;
+        s.source = source;
+        s.objectUrl = URL.createObjectURL(file);
+        s.thumbUrl = file.type.startsWith("image/") ? s.objectUrl : null;
+        updateDisplay(side);
+        updateSubmit();
+      }
+
+      document.querySelectorAll('input[type="file"]').forEach(function (input) {
+        input.addEventListener("change", function () {
+          const side = input.dataset.input;
+          const f = input.files && input.files[0];
+          if (!f) return;
+          if (f.size > 10 * 1024 * 1024) {
+            showToast("Arquivo acima de 10 MB.");
+            input.value = "";
+            return;
+          }
+          setFile(side, f, "upload");
+          input.value = "";
+        });
+      });
+
+      function stopCamera() {
+        if (stream) {
+          stream.getTracks().forEach(function (t) { t.stop(); });
+          stream = null;
+        }
+        video.srcObject = null;
+      }
+
+      function openModal(side) {
+        cameraSide = side;
+        modal.hidden = false;
+        modal.classList.add("open");
+        preview.hidden = true;
+        video.hidden = false;
+        btnCapture.hidden = false;
+        btnRetake.hidden = true;
+        btnUse.hidden = true;
+        capturedBlob = null;
+        hint.textContent = "";
+        var camTitle =
+          side === "front"
+            ? selectedDocType === "cnh"
+              ? "Foto — frente da CNH"
+              : "Foto — frente do documento de identidade"
+            : selectedDocType === "cnh"
+              ? "Foto — verso da CNH"
+              : "Foto — verso do documento de identidade";
+        document.getElementById("camera-title").textContent = camTitle;
+
+        navigator.mediaDevices
+          .getUserMedia({
+            video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+            audio: false,
+          })
+          .then(function (s) {
+            stream = s;
+            video.srcObject = s;
+          })
+          .catch(function () {
+            showToast("Não foi possível aceder à câmera. Permita o acesso ou use “Selecionar arquivo”.");
+            closeModal();
+          });
+      }
+
+      function closeModal() {
+        stopCamera();
+        modal.classList.remove("open");
+        modal.hidden = true;
+        cameraSide = null;
+        preview.removeAttribute("src");
+      }
+
+      document.querySelectorAll("[data-camera]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          openModal(btn.dataset.camera);
+        });
+      });
+
+      btnCancel.addEventListener("click", closeModal);
+
+      btnCapture.addEventListener("click", function () {
+        if (!stream || !cameraSide) return;
+        const w = video.videoWidth;
+        const h = video.videoHeight;
+        if (!w || !h) {
+          showToast("Aguarde o vídeo carregar.");
+          return;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+        canvas.toBlob(
+          function (blob) {
+            if (!blob) return;
+            capturedBlob = blob;
+            preview.src = URL.createObjectURL(blob);
+            preview.hidden = false;
+            video.hidden = true;
+            btnCapture.hidden = true;
+            btnRetake.hidden = false;
+            btnUse.hidden = false;
+            stopCamera();
+            hint.textContent =
+              w < 600 || h < 600
+                ? "Aviso: " + w + "×" + h + " px — abaixo do mínimo recomendado (600×600)."
+                : "Resolução: " + w + "×" + h + " px.";
+          },
+          "image/jpeg",
+          0.92
+        );
+      });
+
+      btnRetake.addEventListener("click", function () {
+        const side = cameraSide;
+        if (preview.src) URL.revokeObjectURL(preview.src);
+        preview.hidden = true;
+        preview.removeAttribute("src");
+        btnRetake.hidden = true;
+        btnUse.hidden = true;
+        btnCapture.hidden = false;
+        hint.textContent = "";
+        capturedBlob = null;
+        if (side) openModal(side);
+      });
+
+      btnUse.addEventListener("click", function () {
+        if (!capturedBlob || !cameraSide) return;
+        const sideUsed = cameraSide;
+        const name = "documento-" + sideUsed + "-" + Date.now() + ".jpg";
+        const file = new File([capturedBlob], name, { type: "image/jpeg" });
+        if (file.size > 10 * 1024 * 1024) {
+          showToast("Imagem muito grande; tente outra captura.");
+          return;
+        }
+        setFile(sideUsed, file, "camera");
+        if (preview.src) URL.revokeObjectURL(preview.src);
+        preview.removeAttribute("src");
+        closeModal();
+        showToast("Foto aplicada — " + (sideUsed === "front" ? "frente" : "verso") + ".");
+      });
+
+      btnSend.addEventListener("click", function () {
+        var opt = docTypeEl.options[docTypeEl.selectedIndex];
+        var name = opt ? opt.text.replace(/\s*\(ex\.:.*?\)\s*/i, "").trim() : "";
+        showToast(
+          "Protótipo: " +
+            name +
+            " — frente e verso prontos. Em produção enviaria ao backend / parceiro KYC."
+        );
+      });
+
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeModal();
+      });
+    })();
+  </script>
+</body>
+</html>
