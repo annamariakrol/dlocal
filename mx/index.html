@@ -495,27 +495,27 @@
               <option value="ine">Credencial para votar (INE/IFE)</option>
               <option value="licencia">Licencia de conducir</option>
             </select>
-            <p class="doc-type-hint">Después de elegir el tipo verá los campos de anverso, reverso y las recomendaciones de imagen.</p>
+            <p class="doc-type-hint">Después de elegir el tipo verá los campos de anverso y reverso. Las recomendaciones de foto están justo debajo; revíselas antes de subir o fotografiar.</p>
           </div>
 
-          <div id="doc-upload-panel" class="doc-upload-panel" hidden>
-            <details class="practices-details">
-              <summary class="practices-summary">
-                Recomendaciones para las imágenes
-                <span class="muted"> — misma guía para credencial y constancia; toque o haga clic para ver el ejemplo</span>
-              </summary>
-              <div class="practices-inner">
-                <figure class="practices-figure">
-                  <img
-                    src="assets/mx-recomendaciones-imagenes.png"
-                    alt="Recomendaciones: ejemplo aceptado y rechazado, documento completo visible, validez y fotos originales."
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </figure>
-              </div>
-            </details>
+          <details class="practices-details" id="identity-photo-practices">
+            <summary class="practices-summary">
+              Recomendaciones para las imágenes
+              <span class="muted"> — misma guía para credencial y constancia; toque o haga clic para ver el ejemplo</span>
+            </summary>
+            <div class="practices-inner">
+              <figure class="practices-figure">
+                <img
+                  src="assets/mx-recomendaciones-imagenes.png"
+                  alt="Recomendaciones: ejemplo aceptado y rechazado, documento completo visible, validez y fotos originales."
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+            </div>
+          </details>
 
+          <div id="doc-upload-panel" class="doc-upload-panel" hidden>
             <div class="field">
               <span class="field-label" id="label-front">Anverso</span>
               <div class="upload-row" data-side="front">
@@ -556,7 +556,7 @@
           <h2 class="section-heading">2. Constancia de Situación Fiscal (CSF)</h2>
           <p class="section-lead">
             Suba el PDF o una foto clara de la constancia emitida por el SAT. Misma opción: archivo o cámara.
-            Si va a <strong>fotografiar</strong> la constancia, aplique las <strong>recomendaciones de imagen</strong> de la sección de identidad de arriba (documento completo, sin recortes, sin capturas de pantalla).
+            Si va a <strong>fotografiar</strong> la constancia, use las mismas <strong>recomendaciones para las imágenes</strong> que en la sección 1 (acordeón sobre la credencial o licencia).
           </p>
 
           <div class="field">
@@ -605,7 +605,7 @@
     Prototipo <strong>MX</strong> — INE o licencia (anverso/reverso) + <strong>CSF</strong>; subida o cámara.
     Archivo local: <code>prototype/doctoralia-mx-kyc-document-upload-camera.html</code>.
     Publicado: <a href="https://annamariakrol.github.io/dlocal/mx/" target="_blank" rel="noopener">annamariakrol.github.io/dlocal/mx/</a>.
-    <strong>Versión 2026-04-13-c</strong>. <em>Recarga forzada</em>: Cmd+Shift+R / Ctrl+F5.
+    <strong>Versión 2026-04-13-d</strong>. <em>Recarga forzada</em>: Cmd+Shift+R / Ctrl+F5.
   </p>
   <p class="source-footer">
     Prototipo BR (referencia): <a href="https://annamariakrol.github.io/dlocal/" target="_blank" rel="noopener">annamariakrol.github.io/dlocal</a>
