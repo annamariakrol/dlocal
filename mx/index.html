@@ -103,11 +103,60 @@
       border: 1px solid var(--border);
       box-shadow: 0 1px 3px rgba(0,0,0,.06);
     }
+    .page-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .page-header-row .page-title {
+      margin: 0;
+      flex: 1;
+      min-width: 0;
+    }
     .page-title {
       font-size: 1.35rem;
       font-weight: 600;
       margin: 0 0 0.75rem;
       color: #222;
+    }
+    .help-link {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin: 0.1rem 0 0;
+      padding: 0;
+      background: none;
+      border: none;
+      font: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #1565c0;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      white-space: nowrap;
+    }
+    .help-link:hover { color: #0d47a1; }
+    .help-link:focus-visible {
+      outline: 2px solid #1565c0;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .help-link-icon {
+      width: 1.125rem;
+      height: 1.125rem;
+      border-radius: 50%;
+      border: 1.5px solid currentColor;
+      font-size: 0.65rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      flex-shrink: 0;
     }
     .lead {
       font-size: 0.9375rem;
@@ -133,71 +182,6 @@
       color: var(--text-muted);
       margin: 0 0 1rem;
       line-height: 1.5;
-    }
-    .practices-details {
-      margin: 0 0 1.1rem;
-      border: 1px solid #d8e8e8;
-      border-radius: 10px;
-      background: linear-gradient(180deg, #f9fdfd 0%, #f6fafb 100%);
-      box-shadow: 0 1px 2px rgba(0, 77, 77, 0.04);
-    }
-    .practices-summary {
-      list-style: none;
-      padding: 0.5rem 0.65rem 0.5rem 1.65rem;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--teal-dark);
-      cursor: pointer;
-      user-select: none;
-      position: relative;
-      line-height: 1.35;
-    }
-    .practices-summary::-webkit-details-marker { display: none; }
-    .practices-summary::marker { content: ""; }
-    .practices-summary::before {
-      content: "";
-      position: absolute;
-      left: 0.55rem;
-      top: 50%;
-      width: 0.35rem;
-      height: 0.35rem;
-      border-right: 2px solid var(--teal);
-      border-bottom: 2px solid var(--teal);
-      transform: translateY(-65%) rotate(-45deg);
-      transition: transform 0.18s ease;
-      opacity: 0.85;
-    }
-    .practices-details[open] .practices-summary::before {
-      transform: translateY(-35%) rotate(45deg);
-    }
-    .practices-summary .muted {
-      font-weight: 400;
-      color: var(--text-muted);
-    }
-    .practices-details[open] .practices-summary {
-      border-bottom: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.65);
-    }
-    .practices-inner {
-      padding: 0.65rem 0.75rem 0.75rem;
-      display: flex;
-      justify-content: center;
-      background: #fff;
-      border-radius: 0 0 9px 9px;
-    }
-    .practices-figure {
-      margin: 0;
-      max-width: 100%;
-    }
-    .practices-figure img {
-      display: block;
-      max-width: min(100%, 300px);
-      width: 100%;
-      height: auto;
-      margin: 0 auto;
-      border-radius: 8px;
-      border: 1px solid #e8eef0;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     }
     .field { margin-bottom: 1.1rem; }
     .doc-type-field { margin-bottom: 1rem; }
@@ -391,6 +375,9 @@
       padding: 1rem;
     }
     .modal-backdrop.open { display: flex; }
+    .modal-backdrop--help {
+      z-index: 1050;
+    }
     .modal {
       background: var(--card);
       border-radius: 12px;
@@ -399,6 +386,33 @@
       padding: 1.25rem;
       border: 1px solid var(--border);
       box-shadow: 0 20px 50px rgba(0,0,0,.2);
+    }
+    .modal--help {
+      max-width: 520px;
+      max-height: min(90vh, 720px);
+      overflow-y: auto;
+    }
+    .modal--help .help-figure {
+      margin: 0.75rem 0 0;
+      text-align: center;
+    }
+    .modal--help .help-figure img {
+      display: block;
+      max-width: min(100%, 300px);
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 8px;
+      border: 1px solid #e8eef0;
+    }
+    .help-modal-lead {
+      margin: 0 0 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .modal--help .info-blue ul.tight-bottom {
+      margin-bottom: 0;
     }
     .modal h3 { margin: 0 0 0.75rem; font-size: 1.05rem; color: #222; }
     .modal video,
@@ -478,7 +492,20 @@
       <header class="topbar">Doctoralia Pagos</header>
       <div class="layout-inner">
         <main class="form-main">
-          <h1 class="page-title">Envíe sus documentos</h1>
+          <div class="page-header-row">
+            <h1 class="page-title" id="page-main-title">Envíe sus documentos</h1>
+            <button
+              type="button"
+              class="help-link"
+              id="help-open"
+              aria-haspopup="dialog"
+              aria-controls="help-recommendations-modal"
+              aria-expanded="false"
+            >
+              <span class="help-link-icon" aria-hidden="true">?</span>
+              Necesito ayuda
+            </button>
+          </div>
           <p class="lead">
             Para confirmar su identidad necesitamos <strong>un documento oficial con foto</strong>: credencial INE o licencia de conducir.
             Además debe adjuntar su <strong>Constancia de Situación Fiscal (CSF)</strong> del SAT.
@@ -495,25 +522,8 @@
               <option value="ine">Credencial para votar (INE/IFE)</option>
               <option value="licencia">Licencia de conducir</option>
             </select>
-            <p class="doc-type-hint">Después de elegir el tipo verá los campos de anverso y reverso. Las recomendaciones de foto están justo debajo; revíselas antes de subir o fotografiar.</p>
+            <p class="doc-type-hint">Después de elegir el tipo verá los campos de anverso y reverso. Para consejos de foto (credencial, licencia y constancia), use <strong>Necesito ayuda</strong> arriba a la derecha.</p>
           </div>
-
-          <details class="practices-details" id="identity-photo-practices">
-            <summary class="practices-summary">
-              Recomendaciones para las imágenes
-              <span class="muted"> — misma guía para credencial y constancia; toque o haga clic para ver el ejemplo</span>
-            </summary>
-            <div class="practices-inner">
-              <figure class="practices-figure">
-                <img
-                  src="assets/mx-recomendaciones-imagenes.png"
-                  alt="Recomendaciones: ejemplo aceptado y rechazado, documento completo visible, validez y fotos originales."
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-            </div>
-          </details>
 
           <div id="doc-upload-panel" class="doc-upload-panel" hidden>
             <div class="field">
@@ -556,7 +566,7 @@
           <h2 class="section-heading">2. Constancia de Situación Fiscal (CSF)</h2>
           <p class="section-lead">
             Suba el PDF o una foto clara de la constancia emitida por el SAT. Misma opción: archivo o cámara.
-            Si va a <strong>fotografiar</strong> la constancia, use las mismas <strong>recomendaciones para las imágenes</strong> que en la sección 1 (acordeón sobre la credencial o licencia).
+            Si va a <strong>fotografiar</strong> la constancia, revise las mismas recomendaciones en <strong>Necesito ayuda</strong> (arriba a la derecha).
           </p>
 
           <div class="field">
@@ -602,14 +612,49 @@
   </div>
 
   <p class="source-footer">
-    Prototipo <strong>MX</strong> — INE o licencia (anverso/reverso) + <strong>CSF</strong>; subida o cámara.
+    Prototipo <strong>MX</strong> — INE o licencia + <strong>CSF</strong>; recomendaciones en modal <strong>Necesito ayuda</strong> (esquina superior derecha).
     Archivo local: <code>prototype/doctoralia-mx-kyc-document-upload-camera.html</code>.
     Publicado: <a href="https://annamariakrol.github.io/dlocal/mx/" target="_blank" rel="noopener">annamariakrol.github.io/dlocal/mx/</a>.
-    <strong>Versión 2026-04-13-d</strong>. <em>Recarga forzada</em>: Cmd+Shift+R / Ctrl+F5.
+    <strong>Versión 2026-04-14-a</strong>. <em>Recarga forzada</em>: Cmd+Shift+R / Ctrl+F5.
   </p>
   <p class="source-footer">
     Prototipo BR (referencia): <a href="https://annamariakrol.github.io/dlocal/" target="_blank" rel="noopener">annamariakrol.github.io/dlocal</a>
   </p>
+
+  <div
+    class="modal-backdrop modal-backdrop--help"
+    id="help-recommendations-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="help-modal-title"
+    hidden
+  >
+    <div class="modal modal--help">
+      <h3 id="help-modal-title">Recomendaciones para las imágenes</h3>
+      <p class="help-modal-lead">
+        Aquí tiene una guía con ejemplos de escenarios aceptados y rechazados. La misma orientación aplica a la credencial, la licencia y la constancia fiscal.
+      </p>
+      <figure class="help-figure">
+        <img
+          src="assets/mx-recomendaciones-imagenes.png"
+          alt="Ejemplo correcto: documento completo. Ejemplo incorrecto: documento recortado."
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+      <div class="info-blue" role="note" style="margin-top: 1rem;">
+        <strong>Requisitos técnicos</strong>
+        <ul class="tight-bottom">
+          <li>Aceptamos <strong>JPEG, PNG y PDF</strong> con resolución mínima recomendada de <strong>600×600</strong> px y tamaño máximo de <strong>10 MB</strong> por archivo.</li>
+          <li>Las imágenes deben ser <strong>claras, a color</strong>, sin suciedad ni obstrucciones que tapen datos.</li>
+          <li>Documento vigente (recomendamos al menos <strong>tres meses</strong> de validez) y <strong>foto original</strong> del físico, no captura de pantalla.</li>
+        </ul>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="primary" id="help-close">Continuar</button>
+      </div>
+    </div>
+  </div>
 
   <div class="modal-backdrop" id="camera-modal" role="dialog" aria-modal="true" aria-labelledby="camera-title" hidden>
     <div class="modal">
@@ -677,6 +722,35 @@
       const btnUse = document.getElementById("camera-use");
       const btnSend = document.getElementById("btn-send");
       const toastEl = document.getElementById("toast");
+
+      const helpModal = document.getElementById("help-recommendations-modal");
+      const helpOpen = document.getElementById("help-open");
+      const helpClose = document.getElementById("help-close");
+
+      function openHelpModal() {
+        helpModal.hidden = false;
+        helpModal.classList.add("open");
+        helpOpen.setAttribute("aria-expanded", "true");
+        helpClose.focus();
+      }
+
+      function closeHelpModal() {
+        helpModal.classList.remove("open");
+        helpModal.hidden = true;
+        helpOpen.setAttribute("aria-expanded", "false");
+        helpOpen.focus();
+      }
+
+      helpOpen.addEventListener("click", openHelpModal);
+      helpClose.addEventListener("click", closeHelpModal);
+      helpModal.addEventListener("click", function (e) {
+        if (e.target === helpModal) closeHelpModal();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && helpModal.classList.contains("open")) {
+          closeHelpModal();
+        }
+      });
 
       function showToast(msg) {
         toastEl.textContent = msg;
