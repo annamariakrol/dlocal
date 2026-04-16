@@ -45,31 +45,21 @@ The data below shows that **Stripe saved-card pay-ins are already a real lane in
 
 ## 4. Data evidence (Mexico, Stripe “saved card” pay-ins)
 
-**Environment:** DocPlanner **BroadDB** — Mexico payments database `zl_crm_mx_broad` (anonymised dev snapshot).  
+**Environment:** DocPlanner **BroadDB** — Mexico payments data (anonymised dev snapshot).  
 **Currency:** **MXN** for all rows in these extracts.
 
 ### 4.1 Definitions (same across all metrics)
 
-We count **captured marketplace payments** where the payment object is **`UserCreditCardPayment`** (Stripe charge using a **saved** `credit_card_id` on the patient wallet side — i.e. not “type card details again for every charge” at the same friction level as a fresh checkout).
+We count **captured online marketplace pay-ins** where the patient paid with a **card saved in the Stripe wallet** (one-click style), rather than entering full card details from scratch on each payment like a typical one-off checkout.
 
-Technical filters:
-
-- `payment.type = 'marketplace_payment'`
-- `payment.status = 'captured'`
-- `payment.payment_object_class = 'UserCreditCardPayment'`
-- `user_credit_card_payment.credit_card_id IS NOT NULL`
-
-**Wallet inventory** (authorised saved Stripe cards on file) additionally requires:
-
-- `credit_card.type = 'user'`, `credit_card.status = 'authorized'`, `credit_card.is_fraudulent = 0`, `credit_card.deleted_at IS NULL`
-- `user_credit_card_stripe_data.status = 'authorized'`
+**Wallet inventory** means Stripe wallet cards that are **authorised** and **active** for the patient (not marked fraudulent, not deleted).
 
 ### 4.2 Wallet scale (authorised Stripe cards on file)
 
 | Metric | Value |
 |--------|------:|
 | Distinct authorised Stripe wallet cards | **74,507** |
-| Distinct patients (`user.external_id` → monolith `user.id`) | **68,130** |
+| Distinct patients | **68,130** |
 
 ### 4.3 2026 usage — saved-card pay-ins and repeat visits
 
@@ -77,8 +67,8 @@ Calendar year **2026** (through snapshot date on BroadDB):
 
 | Metric | Value |
 |--------|------:|
-| Captured marketplace payments (`UserCreditCardPayment` + saved `credit_card_id`) | **22,929** |
-| Successful **visit** payments linked to those pay-ins (monolith `crm_visit_payment`) | **22,610** payment rows |
+| Captured marketplace payments (saved Stripe card) | **22,929** |
+| Successful **visit** payments linked to those pay-ins | **22,610** payment rows |
 | Distinct patients (visit path) | **14,590** |
 | Distinct visit bookings (visit path) | **22,610** |
 | **Patients with >1 visit booking paid with the *same* saved Stripe card in 2026** | **2,606** |
@@ -93,11 +83,11 @@ Calendar year **2026** (through snapshot date on BroadDB):
 | Metric | Value |
 |--------|------:|
 | Distinct saved Stripe cards with **>1** captured marketplace payment (all time) | **14,176** |
-| Highest observed payment count on a single `credit_card_id` | **91** payments |
+| Highest observed payment count on a single saved card | **91** payments |
 
 ### 4.5 Monthly TPV and transaction counts (saved Stripe card pay-ins)
 
-TPV = `SUM(payment.amount)` per calendar month of `payment.created_at`.  
+TPV is the **sum of payment amounts** per calendar month (by payment date in the snapshot).  
 **April 2026 excluded** (partial month in snapshot). **Newest month first.**
 
 | Month | TPV (MXN) | Transactions |
@@ -152,8 +142,8 @@ TPV = `SUM(payment.amount)` per calendar month of `payment.created_at`.
 ## 6. Limitations (read before quoting numbers externally)
 
 1. **BroadDB is anonymised dev data** — excellent for **direction and order-of-magnitude**, not for audited financial statements or investor filings.  
-2. **Month boundaries** use stored `payment.created_at` (no Mexico-local timezone adjustment).  
-3. Metrics count **payments-app captured pay-ins** with the Stripe saved-card object — reconciliation to finance / NetSuite may differ slightly.  
+2. **Month boundaries** use stored payment timestamps in the snapshot (no Mexico-local timezone adjustment).  
+3. Metrics count **captured pay-ins** with a **saved Stripe card** — reconciliation to finance / NetSuite may differ slightly.  
 4. **dLocal wallet** volume is **not** the subject of this extract; this doc is intentionally **Stripe-wallet evidence** for the “do not disable” argument.
 
 ---

@@ -118,23 +118,12 @@
     <hr />
 
     <h2>4. Data evidence (Mexico, Stripe “saved card” pay-ins)</h2>
-    <p><strong>Environment:</strong> DocPlanner <strong>BroadDB</strong> — Mexico payments database <code>zl_crm_mx_broad</code> (anonymised dev snapshot).<br />
+    <p><strong>Environment:</strong> DocPlanner <strong>BroadDB</strong> — Mexico payments data (anonymised dev snapshot).<br />
     <strong>Currency:</strong> <strong>MXN</strong> for all rows in these extracts.</p>
 
     <h3>4.1 Definitions (same across all metrics)</h3>
-    <p>We count <strong>captured marketplace payments</strong> where the payment object is <strong><code>UserCreditCardPayment</code></strong> (Stripe charge using a <strong>saved</strong> <code>credit_card_id</code> on the patient wallet side — i.e. not “type card details again for every charge” at the same friction level as a fresh checkout).</p>
-    <p><strong>Technical filters:</strong></p>
-    <ul>
-      <li><code>payment.type = 'marketplace_payment'</code></li>
-      <li><code>payment.status = 'captured'</code></li>
-      <li><code>payment.payment_object_class = 'UserCreditCardPayment'</code></li>
-      <li><code>user_credit_card_payment.credit_card_id IS NOT NULL</code></li>
-    </ul>
-    <p><strong>Wallet inventory</strong> (authorised saved Stripe cards on file) additionally requires:</p>
-    <ul>
-      <li><code>credit_card.type = 'user'</code>, <code>credit_card.status = 'authorized'</code>, <code>credit_card.is_fraudulent = 0</code>, <code>credit_card.deleted_at IS NULL</code></li>
-      <li><code>user_credit_card_stripe_data.status = 'authorized'</code></li>
-    </ul>
+    <p>We count <strong>captured online marketplace pay-ins</strong> where the patient paid with a <strong>card saved in the Stripe wallet</strong> (one-click style), rather than entering full card details from scratch on each payment like a typical one-off checkout.</p>
+    <p><strong>Wallet inventory</strong> means Stripe wallet cards that are <strong>authorised</strong> and <strong>active</strong> for the patient (not marked fraudulent, not deleted).</p>
 
     <h3>4.2 Wallet scale (authorised Stripe cards on file)</h3>
     <div class="table-wrap">
@@ -142,7 +131,7 @@
         <thead><tr><th>Metric</th><th>Value</th></tr></thead>
         <tbody>
           <tr><td>Distinct authorised Stripe wallet cards</td><td><strong>74,507</strong></td></tr>
-          <tr><td>Distinct patients (<code>user.external_id</code> → monolith <code>user.id</code>)</td><td><strong>68,130</strong></td></tr>
+          <tr><td>Distinct patients</td><td><strong>68,130</strong></td></tr>
         </tbody>
       </table>
     </div>
@@ -153,8 +142,8 @@
       <table class="metrics">
         <thead><tr><th>Metric</th><th>Value</th></tr></thead>
         <tbody>
-          <tr><td>Captured marketplace payments (<code>UserCreditCardPayment</code> + saved <code>credit_card_id</code>)</td><td><strong>22,929</strong></td></tr>
-          <tr><td>Successful <strong>visit</strong> payments linked to those pay-ins (monolith <code>crm_visit_payment</code>)</td><td><strong>22,610</strong> payment rows</td></tr>
+          <tr><td>Captured marketplace payments (saved Stripe card)</td><td><strong>22,929</strong></td></tr>
+          <tr><td>Successful <strong>visit</strong> payments linked to those pay-ins</td><td><strong>22,610</strong> payment rows</td></tr>
           <tr><td>Distinct patients (visit path)</td><td><strong>14,590</strong></td></tr>
           <tr><td>Distinct visit bookings (visit path)</td><td><strong>22,610</strong></td></tr>
           <tr><td><strong>Patients with &gt;1 visit booking paid with the <em>same</em> saved Stripe card in 2026</strong></td><td><strong>2,606</strong></td></tr>
@@ -171,13 +160,13 @@
         <thead><tr><th>Metric</th><th>Value</th></tr></thead>
         <tbody>
           <tr><td>Distinct saved Stripe cards with <strong>&gt;1</strong> captured marketplace payment (all time)</td><td><strong>14,176</strong></td></tr>
-          <tr><td>Highest observed payment count on a single <code>credit_card_id</code></td><td><strong>91</strong> payments</td></tr>
+          <tr><td>Highest observed payment count on a single saved card</td><td><strong>91</strong> payments</td></tr>
         </tbody>
       </table>
     </div>
 
     <h3>4.5 Monthly TPV and transaction counts (saved Stripe card pay-ins)</h3>
-    <p>TPV = <code>SUM(payment.amount)</code> per calendar month of <code>payment.created_at</code>.<br />
+    <p>TPV is the <strong>sum of payment amounts</strong> per calendar month (by payment date in the snapshot).<br />
     <strong>April 2026 excluded</strong> (partial month in snapshot). <strong>Newest month first.</strong></p>
     <div class="table-wrap">
       <table class="metrics">
@@ -252,8 +241,8 @@
     <h2>6. Limitations (read before quoting numbers externally)</h2>
     <ol>
       <li><strong>BroadDB is anonymised dev data</strong> — excellent for <strong>direction and order-of-magnitude</strong>, not for audited financial statements or investor filings.</li>
-      <li><strong>Month boundaries</strong> use stored <code>payment.created_at</code> (no Mexico-local timezone adjustment).</li>
-      <li>Metrics count <strong>payments-app captured pay-ins</strong> with the Stripe saved-card object — reconciliation to finance / NetSuite may differ slightly.</li>
+      <li><strong>Month boundaries</strong> use stored payment timestamps in the snapshot (no Mexico-local timezone adjustment).</li>
+      <li>Metrics count <strong>captured pay-ins</strong> with a <strong>saved Stripe card</strong> — reconciliation to finance / NetSuite may differ slightly.</li>
       <li><strong>dLocal wallet</strong> volume is <strong>not</strong> the subject of this extract; this doc is intentionally <strong>Stripe-wallet evidence</strong> for the “do not disable” argument.</li>
     </ol>
 
