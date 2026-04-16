@@ -12,4 +12,4 @@ Static **UX prototype** for Brazilian identity document capture (Doctoralia Paga
 
 **Mexico (INE/licencia + CSF):** [annamariakrol.github.io/dlocal/mx/](https://annamariakrol.github.io/dlocal/mx/)
 
-**Mexico — dual wallets (Stripe + dLocal, REVPAY-6358 stakeholder briefing):** [annamariakrol.github.io/dlocal/mexico-dual-wallets/](https://annamariakrol.github.io/dlocal/mexico-dual-wallets/) · [README on GitHub](https://github.com/annamariakrol/dlocal/blob/main/mexico-dual-wallets/README.md)
+**Mexico — dual wallets (Stripe + dLocal, REVPAY-6358 stakeholder briefing):** [Short intro (Pages)](https://annamariakrol.github.io/dlocal/mexico-dual-wallets/) · [**Full HTML briefing**](https://annamariakrol.github.io/dlocal/mexico-dual-wallets/briefing.html) · [README (Markdown) on GitHub](https://github.com/annamariakrol/dlocal/blob/main/mexico-dual-wallets/README.md)

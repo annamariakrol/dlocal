@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mexico: dual wallets (Stripe + dLocal) — stakeholder briefing | REVPAY-6358</title>
+  <style>
+    :root {
+      --teal: #00b5b5;
+      --teal-dark: #007d7d;
+      --bg: #f0f3f5;
+      --card: #fff;
+      --border: #dde3e8;
+      --text: #1a1a1a;
+      --muted: #5c6570;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 1rem;
+    }
+    .nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1.25rem;
+      font-size: 0.9rem;
+    }
+    .nav a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    .nav a:hover { text-decoration: underline; }
+    article {
+      max-width: 52rem;
+      margin: 0 auto;
+      padding: 1.75rem 1.25rem 3.5rem;
+    }
+    h1 { font-size: 1.65rem; font-weight: 700; margin: 0 0 0.35rem; line-height: 1.25; }
+    .lede { color: var(--muted); margin: 0 0 1.5rem; font-size: 0.95rem; }
+    .lede a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    .lede a:hover { text-decoration: underline; }
+    h2 { font-size: 1.2rem; margin: 2rem 0 0.75rem; color: var(--teal-dark); border-bottom: 2px solid var(--teal); padding-bottom: 0.25rem; }
+    h3 { font-size: 1.05rem; margin: 1.35rem 0 0.5rem; }
+    p { margin: 0 0 0.85rem; }
+    ul, ol { margin: 0.5rem 0 0.85rem; padding-left: 1.35rem; }
+    li { margin-bottom: 0.35rem; }
+    a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { font-weight: 650; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 1.75rem 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.86em;
+      background: #eef6f6;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+    .table-wrap { overflow-x: auto; margin: 0.75rem 0 1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { padding: 0.5rem 0.65rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: #e8f7f7; font-weight: 650; white-space: nowrap; }
+    table.metrics td:not(:first-child),
+    table.metrics th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+    tr:last-child td { border-bottom: none; }
+    pre {
+      margin: 0.75rem 0 1rem;
+      padding: 1rem 1.1rem;
+      background: #1e2933;
+      color: #e8eef2;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .footnote { color: var(--muted); font-size: 0.9rem; font-style: italic; margin-top: 2rem; }
+    .callout {
+      background: #e8f7f7;
+      border: 1px solid #b8e0e0;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin: 0.85rem 0;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="./">← Short intro</a>
+    · <a href="https://github.com/annamariakrol/dlocal/blob/main/mexico-dual-wallets/README.md">Markdown (GitHub)</a>
+  </nav>
+
+  <article>
+    <h1>Mexico: dual wallets (Stripe + dLocal) — stakeholder briefing</h1>
+    <p class="lede">
+      <strong>Audience:</strong> Product, commercial, medical leadership, and engineering leadership<br />
+      <strong>Purpose:</strong> Standalone read — context, <strong>why we are doing this</strong>, and <strong>quantified risk</strong> if Stripe wallet were turned off when dLocal wallet is enabled<br />
+      <strong>Ticket / epic:</strong> <a href="https://docplanner.atlassian.net/browse/REVPAY-6358">REVPAY-6358</a><br />
+      <strong>Product request (PR):</strong> <a href="https://github.com/DocPlanner/dp-payments-ai/pull/255">DocPlanner/dp-payments-ai#255</a>
+    </p>
+
+    <h2>1. Executive summary</h2>
+    <p>In Mexico, many patients already pay with <strong>cards saved in the Stripe wallet</strong> (one-click style pay-ins). Today the product cannot treat <strong>Stripe</strong> and <strong>dLocal</strong> wallets as <strong>two parallel, patient-safe</strong> capabilities without a deliberate design.</p>
+    <p>If we <strong>enabled dLocal wallet</strong> in a way that <strong>automatically disabled Stripe wallet</strong>, patients who rely on saved Stripe cards would be pushed back to <strong>full card entry (e.g. Stripe Checkout)</strong> on every payment. That is a <strong>high-friction</strong> change at scale.</p>
+    <p><strong>Evidence from BroadDB (Mexico payments shard)</strong> shows non-trivial <strong>saved-card payment volume and TPV</strong> and meaningful <strong>repeat usage</strong> in 2026. The <strong>REVPAY-6358</strong> request (PR #255) describes <strong>multiple wallets</strong> (per customer provider, combined <code>/wallet</code>, dedupe, symmetric Stripe/dLocal behaviour) so we can <strong>add dLocal wallet without breaking Stripe wallet</strong> — protecting continuity of online pay-ins and reducing the risk of complaints, in-office payment substitution, and payment-setup churn.</p>
+    <p>This document is <strong>evidence + narrative</strong>; PR #255 is the <strong>formal scope and acceptance criteria</strong> for delivery.</p>
+
+    <hr />
+
+    <h2>2. What we are doing (short)</h2>
+    <ul>
+      <li><strong>Deliver</strong> patient wallet behaviour in Mexico that supports <strong>both</strong> Stripe-backed and dLocal-backed saved cards where the business requires it — with a <strong>single combined wallet UI</strong>, clear rules for <strong>which cards appear at checkout</strong>, and <strong>remove</strong> semantics that do not strand users.</li>
+      <li><strong>Avoid</strong> a “toggle” world where turning on dLocal wallet <strong>silently kills</strong> Stripe wallet for patients who already depend on it.</li>
+    </ul>
+    <p><strong>Why:</strong> continuity of payment experience, <strong>TPV protection</strong>, fewer support escalations to doctors, lower risk of moving clinics from mandatory to optional online payment.</p>
+
+    <hr />
+
+    <h2>3. What could go wrong without this feature (plain language)</h2>
+    <p>If Stripe wallet is <strong>disabled</strong> while dLocal wallet is <strong>enabled</strong> (single-wallet assumption):</p>
+    <ol>
+      <li><strong>Friction:</strong> Patients must re-enter card details far more often → <strong>drop-off</strong> at pay step.</li>
+      <li><strong>Behavioural substitution:</strong> More <strong>pay in office</strong> instead of online prepay.</li>
+      <li><strong>Doctor-facing noise:</strong> Patients <strong>complain to the doctor</strong> (“your online payment is broken / harder”).</li>
+      <li><strong>Product churn:</strong> Clinics may <strong>turn off mandatory prepay</strong> or reduce online payment adoption.</li>
+    </ol>
+    <p>The data below shows that <strong>Stripe saved-card pay-ins are already a real lane in MX</strong>, not a niche edge case — so the risk is <strong>material</strong>, not hypothetical.</p>
+
+    <hr />
+
+    <h2>4. Data evidence (Mexico, Stripe “saved card” pay-ins)</h2>
+    <p><strong>Environment:</strong> DocPlanner <strong>BroadDB</strong> — Mexico payments database <code>zl_crm_mx_broad</code> (anonymised dev snapshot).<br />
+    <strong>Currency:</strong> <strong>MXN</strong> for all rows in these extracts.</p>
+
+    <h3>4.1 Definitions (same across all metrics)</h3>
+    <p>We count <strong>captured marketplace payments</strong> where the payment object is <strong><code>UserCreditCardPayment</code></strong> (Stripe charge using a <strong>saved</strong> <code>credit_card_id</code> on the patient wallet side — i.e. not “type card details again for every charge” at the same friction level as a fresh checkout).</p>
+    <p><strong>Technical filters:</strong></p>
+    <ul>
+      <li><code>payment.type = 'marketplace_payment'</code></li>
+      <li><code>payment.status = 'captured'</code></li>
+      <li><code>payment.payment_object_class = 'UserCreditCardPayment'</code></li>
+      <li><code>user_credit_card_payment.credit_card_id IS NOT NULL</code></li>
+    </ul>
+    <p><strong>Wallet inventory</strong> (authorised saved Stripe cards on file) additionally requires:</p>
+    <ul>
+      <li><code>credit_card.type = 'user'</code>, <code>credit_card.status = 'authorized'</code>, <code>credit_card.is_fraudulent = 0</code>, <code>credit_card.deleted_at IS NULL</code></li>
+      <li><code>user_credit_card_stripe_data.status = 'authorized'</code></li>
+    </ul>
+
+    <h3>4.2 Wallet scale (authorised Stripe cards on file)</h3>
+    <div class="table-wrap">
+      <table class="metrics">
+        <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Distinct authorised Stripe wallet cards</td><td><strong>74,507</strong></td></tr>
+          <tr><td>Distinct patients (<code>user.external_id</code> → monolith <code>user.id</code>)</td><td><strong>68,130</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>4.3 2026 usage — saved-card pay-ins and repeat visits</h3>
+    <p>Calendar year <strong>2026</strong> (through snapshot date on BroadDB):</p>
+    <div class="table-wrap">
+      <table class="metrics">
+        <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Captured marketplace payments (<code>UserCreditCardPayment</code> + saved <code>credit_card_id</code>)</td><td><strong>22,929</strong></td></tr>
+          <tr><td>Successful <strong>visit</strong> payments linked to those pay-ins (monolith <code>crm_visit_payment</code>)</td><td><strong>22,610</strong> payment rows</td></tr>
+          <tr><td>Distinct patients (visit path)</td><td><strong>14,590</strong></td></tr>
+          <tr><td>Distinct visit bookings (visit path)</td><td><strong>22,610</strong></td></tr>
+          <tr><td><strong>Patients with &gt;1 visit booking paid with the <em>same</em> saved Stripe card in 2026</strong></td><td><strong>2,606</strong></td></tr>
+          <tr><td>Patient–card pairs with <strong>&gt;1</strong> such visit booking</td><td><strong>2,627</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Custom transactions</strong> (same Stripe saved-card definition, 2026): <strong>203</strong> patients, <strong>273</strong> successful custom payments; <strong>29</strong> patient–card pairs with <strong>&gt;1</strong> custom payment on the same card (separate from visit “booking” counts).</p>
+    <div class="callout"><strong>Interpretation for stakeholders:</strong> a large cohort already <strong>reuses</strong> the same saved Stripe card across <strong>multiple</strong> bookings in a single year. Forcing full manual card entry repeatedly is likely to <strong>hurt conversion</strong> disproportionately for this group.</div>
+
+    <h3>4.4 “Heavy wallet” cards (all time, &gt;1 payment)</h3>
+    <div class="table-wrap">
+      <table class="metrics">
+        <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Distinct saved Stripe cards with <strong>&gt;1</strong> captured marketplace payment (all time)</td><td><strong>14,176</strong></td></tr>
+          <tr><td>Highest observed payment count on a single <code>credit_card_id</code></td><td><strong>91</strong> payments</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>4.5 Monthly TPV and transaction counts (saved Stripe card pay-ins)</h3>
+    <p>TPV = <code>SUM(payment.amount)</code> per calendar month of <code>payment.created_at</code>.<br />
+    <strong>April 2026 excluded</strong> (partial month in snapshot). <strong>Newest month first.</strong></p>
+    <div class="table-wrap">
+      <table class="metrics">
+        <thead><tr><th>Month</th><th>TPV (MXN)</th><th>Transactions</th></tr></thead>
+        <tbody>
+          <tr><td>2026-03</td><td>7,265,787.00</td><td>7,626</td></tr>
+          <tr><td>2026-02</td><td>6,028,845.00</td><td>6,252</td></tr>
+          <tr><td>2026-01</td><td>6,846,325.01</td><td>7,222</td></tr>
+          <tr><td>2025-12</td><td>5,328,957.02</td><td>5,718</td></tr>
+          <tr><td>2025-11</td><td>5,465,969.04</td><td>6,005</td></tr>
+          <tr><td>2025-10</td><td>5,210,465.02</td><td>5,680</td></tr>
+          <tr><td>2025-09</td><td>5,188,371.04</td><td>5,565</td></tr>
+          <tr><td>2025-08</td><td>5,138,629.00</td><td>5,722</td></tr>
+          <tr><td>2025-07</td><td>5,304,916.01</td><td>5,878</td></tr>
+          <tr><td>2025-06</td><td>4,982,388.41</td><td>5,540</td></tr>
+          <tr><td>2025-05</td><td>4,225,625.02</td><td>4,624</td></tr>
+          <tr><td>2025-04</td><td>5,092,623.04</td><td>5,278</td></tr>
+          <tr><td>2025-03</td><td>5,021,522.51</td><td>5,685</td></tr>
+          <tr><td>2025-02</td><td>4,276,754.00</td><td>4,885</td></tr>
+          <tr><td>2025-01</td><td>4,529,784.40</td><td>5,243</td></tr>
+          <tr><td>2024-12</td><td>3,253,044.13</td><td>3,767</td></tr>
+          <tr><td>2024-11</td><td>3,668,616.40</td><td>4,248</td></tr>
+          <tr><td>2024-10</td><td>3,838,942.00</td><td>4,496</td></tr>
+          <tr><td>2024-09</td><td>3,342,931.99</td><td>3,959</td></tr>
+          <tr><td>2024-08</td><td>2,952,252.00</td><td>3,568</td></tr>
+          <tr><td>2024-07</td><td>2,926,689.00</td><td>3,584</td></tr>
+          <tr><td>2024-06</td><td>2,662,931.00</td><td>3,277</td></tr>
+          <tr><td>2024-05</td><td>2,589,666.50</td><td>3,185</td></tr>
+          <tr><td>2024-04</td><td>2,510,449.25</td><td>3,055</td></tr>
+          <tr><td>2024-03</td><td>2,219,613.00</td><td>2,717</td></tr>
+          <tr><td>2024-02</td><td>2,011,583.75</td><td>2,527</td></tr>
+          <tr><td>2024-01</td><td>2,194,290.00</td><td>2,775</td></tr>
+          <tr><td>2023-12</td><td>1,427,342.50</td><td>1,825</td></tr>
+          <tr><td>2023-11</td><td>543,968.00</td><td>672</td></tr>
+          <tr><td>2023-10</td><td>175.00</td><td>7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Takeaway:</strong> monthly saved-card TPV in MX is already in the <strong>multi-million MXN</strong> range in recent full months — i.e. <strong>material revenue exposure</strong> if the wallet lane is disrupted.</p>
+
+    <hr />
+
+    <h2>5. How this supports PR #255 / REVPAY-6358</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Stakeholder concern</th><th>How the data helps</th><th>How the feature (request) answers</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>“Is Stripe wallet marginal?”</td>
+            <td><strong>No</strong> — tens of thousands of authorised cards, thousands of monthly transactions, multi-million MXN TPV.</td>
+            <td>Dual-wallet design keeps Stripe wallet <strong>alive</strong> while dLocal wallet is introduced.</td>
+          </tr>
+          <tr>
+            <td>“Do patients actually reuse saved cards?”</td>
+            <td><strong>Yes</strong> — thousands of patients with <strong>&gt;1</strong> booking on the <strong>same</strong> saved card in 2026 alone.</td>
+            <td>Per-payment / per-provider wallet rules avoid forcing everyone back to <strong>full card entry</strong>.</td>
+          </tr>
+          <tr>
+            <td>“What breaks if we flip a single global switch?”</td>
+            <td>Saved-card lane is <strong>economically meaningful</strong>; friction hits <strong>repeat payers</strong> hardest.</td>
+            <td>Request defines <strong>symmetric</strong> Stripe/dLocal behaviour, <strong>combined <code>/wallet</code></strong>, dedupe, and rollout considerations — aimed at <strong>no pay-in cliff</strong>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Important:</strong> PR #255 is the <strong>product request</strong> (scope + AC). It <strong>aligns</strong> with the evidence above; <strong>guaranteeing</strong> no TPV disruption still depends on <strong>implementation quality</strong>, rollout gates, and monitoring in production.</p>
+
+    <hr />
+
+    <h2>6. Limitations (read before quoting numbers externally)</h2>
+    <ol>
+      <li><strong>BroadDB is anonymised dev data</strong> — excellent for <strong>direction and order-of-magnitude</strong>, not for audited financial statements or investor filings.</li>
+      <li><strong>Month boundaries</strong> use stored <code>payment.created_at</code> (no Mexico-local timezone adjustment).</li>
+      <li>Metrics count <strong>payments-app captured pay-ins</strong> with the Stripe saved-card object — reconciliation to finance / NetSuite may differ slightly.</li>
+      <li><strong>dLocal wallet</strong> volume is <strong>not</strong> the subject of this extract; this doc is intentionally <strong>Stripe-wallet evidence</strong> for the “do not disable” argument.</li>
+    </ol>
+
+    <hr />
+
+    <h2>7. Appendix — reproducible SQL (monthly TPV, MXN)</h2>
+    <p>Excludes April 2026 as an incomplete month; newest month first.</p>
+<pre><code>SELECT DATE_FORMAT(p.created_at, '%Y-%m') AS month_mx,
+       SUM(p.amount) AS monthly_tpv_mxn,
+       COUNT(*) AS transactions
+FROM zl_crm_mx_broad.payment p
+JOIN zl_crm_mx_broad.user_credit_card_payment uccp
+  ON uccp.id = p.payment_object_id
+WHERE p.type = 'marketplace_payment'
+  AND p.status = 'captured'
+  AND p.payment_object_class = 'UserCreditCardPayment'
+  AND uccp.credit_card_id IS NOT NULL
+  AND NOT (p.created_at &gt;= '2026-04-01' AND p.created_at &lt; '2026-05-01')
+GROUP BY DATE_FORMAT(p.created_at, '%Y-%m')
+ORDER BY month_mx DESC;</code></pre>
+
+    <p class="footnote">Prepared for stakeholder circulation. For the authoritative delivery spec, use PR #255 and Jira REVPAY-6358. Personal workflow note — not affiliated with the company <strong>dLocal</strong>.</p>
+  </article>
+</body>
+</html>

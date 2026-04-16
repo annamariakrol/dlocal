@@ -5,6 +5,8 @@
 **Ticket / epic:** [REVPAY-6358](https://docplanner.atlassian.net/browse/REVPAY-6358)  
 **Product request (PR):** [DocPlanner/dp-payments-ai#255](https://github.com/DocPlanner/dp-payments-ai/pull/255)
 
+**Full HTML version (GitHub Pages):** [annamariakrol.github.io/dlocal/mexico-dual-wallets/briefing.html](https://annamariakrol.github.io/dlocal/mexico-dual-wallets/briefing.html)
+
 ---
 
 ## 1. Executive summary
