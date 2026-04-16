@@ -1,7 +1,7 @@
 # Brazil: dLocal payout bank details UX — stakeholder briefing
 
 **Audience:** Business stakeholders  
-**Purpose:** Standalone read — **what we ship** under **REVPAY-6359**, **why smoother Brazil dLocal payout-bank capture matters**, and how to **talk about it** without turning onboarding into a “backlog audit.”  
+**Purpose:** Standalone read — **what we ship** under **REVPAY-6359**, **why smoother Brazil dLocal payout-bank capture matters** for doctors and payouts, and **where to find** the formal scope (Jira + request).  
 **Ticket:** [REVPAY-6359](https://docplanner.atlassian.net/browse/REVPAY-6359)  
 **Product request (cycle doc):** [DocPlanner/dp-payments-ai — `6359-dlocal-br-bank-form-ui/request.md`](https://github.com/DocPlanner/dp-payments-ai/blob/main/specs/features/marketplace-payment-panel/cycles/6359-dlocal-br-bank-form-ui/request.md)
 
@@ -13,13 +13,13 @@
 
 **REVPAY-6359** improves **Brazil dLocal payout bank** capture in the revenue dashboard (**first-time setup** and **payout settings**) with a **searchable bank list** aligned to dLocal’s official [Brazil payouts](https://docs.dlocal.com/docs/brazil-payouts) catalog, clearer **placeholders**, always-on **CPF/CNPJ / BRL** guidance, and **bank-specific** branch/account hints—so fewer bad details reach dLocal.
 
-**Why now (product framing, not a debt report):** payout bank is a **high-friction** step: doctors must match **bank code**, **agency/branch**, and **account** to what dLocal expects. In Brazil we **repeatedly** see **tens of merchants per month** slowing down or failing that leg (support + ops see bank-validation and “account not found”-class outcomes). **REVPAY-6359** is the **proactive UX upgrade** that makes the path **calmer and clearer**—similar spirit to how we used a stakeholder briefing for Mexico wallets: **explain the bet**, not drown readers in cumulative database snapshots.
+**Why now:** payout bank is a **high-friction** step: doctors must match **bank code**, **agency/branch**, and **account** to what dLocal expects. In Brazil we **repeatedly** see **tens of merchants per month** slowing down or failing that leg (support and ops see bank-validation and “account not found”-class outcomes). **REVPAY-6359** is a **focused UX upgrade** that makes the path **clearer and easier to complete**—searchable bank list, stronger guidance, and bank-specific hints aligned to dLocal’s Brazil documentation.
 
 ---
 
 ## 1. Executive summary — headline for stakeholders
 
-**Headline:** Brazil dLocal **payout bank** behaves like a **recurring monthly leak**—enough merchants **stall, retry, or drop** on a fiddly form that **REVPAY-6359** turns into a **guided, dLocal-aligned** experience. The goal is **smoother activation and fewer wrong submissions**, not a public reckoning with historical row counts.
+**Headline:** Brazil dLocal **payout bank** is a step where **many merchants each month** **stall, retry, or drop off** because details are easy to get wrong. **REVPAY-6359** replaces a brittle free-text flow with a **guided, dLocal-aligned** experience so more doctors complete payout setup **correctly the first time**.
 
 ---
 
