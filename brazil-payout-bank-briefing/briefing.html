@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Brazil: dLocal payout bank details UX — stakeholder briefing | REVPAY-6359</title>
+  <style>
+    :root {
+      --teal: #00b5b5;
+      --teal-dark: #007d7d;
+      --bg: #f0f3f5;
+      --card: #fff;
+      --border: #dde3e8;
+      --text: #1a1a1a;
+      --muted: #5c6570;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 1rem;
+    }
+    .nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1.25rem;
+      font-size: 0.9rem;
+    }
+    .nav a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    .nav a:hover { text-decoration: underline; }
+    article {
+      max-width: 52rem;
+      margin: 0 auto;
+      padding: 1.75rem 1.25rem 3.5rem;
+    }
+    h1 { font-size: 1.65rem; font-weight: 700; margin: 0 0 0.35rem; line-height: 1.25; }
+    .lede { color: var(--muted); margin: 0 0 1.5rem; font-size: 0.95rem; }
+    .lede a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    .lede a:hover { text-decoration: underline; }
+    h2 { font-size: 1.2rem; margin: 2rem 0 0.75rem; color: var(--teal-dark); border-bottom: 2px solid var(--teal); padding-bottom: 0.25rem; }
+    h3 { font-size: 1.05rem; margin: 1.35rem 0 0.5rem; }
+    p { margin: 0 0 0.85rem; }
+    ul, ol { margin: 0.5rem 0 0.85rem; padding-left: 1.35rem; }
+    li { margin-bottom: 0.35rem; }
+    a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { font-weight: 650; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 1.75rem 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.86em;
+      background: #eef6f6;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+    .table-wrap { overflow-x: auto; margin: 0.75rem 0 1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { padding: 0.5rem 0.65rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: #e8f7f7; font-weight: 650; white-space: nowrap; }
+    table.metrics td:not(:first-child),
+    table.metrics th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+    tr:last-child td { border-bottom: none; }
+    .footnote { color: var(--muted); font-size: 0.9rem; font-style: italic; margin-top: 2rem; }
+    .callout {
+      background: #e8f7f7;
+      border: 1px solid #b8e0e0;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin: 0.85rem 0;
+    }
+    pre.sql {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.82rem;
+      background: #1e2933;
+      color: #e8eef4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="https://github.com/annamariakrol/dlocal/blob/main/brazil-payout-bank-briefing/README.md">Markdown (GitHub)</a>
+    · <a href="https://annamariakrol.github.io/dlocal/">dLocal repo (Pages root)</a>
+  </nav>
+
+  <article>
+    <h1>Brazil: dLocal payout bank details UX — stakeholder briefing</h1>
+    <p class="lede">
+      <strong>Audience:</strong> Business stakeholders<br />
+      <strong>Purpose:</strong> Standalone read — <strong>why improving bank capture is a merchant-activation blocker</strong> for Brazil dLocal, what we ship under <a href="https://docplanner.atlassian.net/browse/REVPAY-6359">REVPAY-6359</a>, and <strong>verified onboarding volume context</strong> (parallel in spirit to the Mexico dual-wallet “show the numbers” pack)<br />
+      <strong>Formal scope / ACs:</strong> <a href="https://github.com/DocPlanner/dp-payments-ai/blob/main/specs/features/marketplace-payment-panel/cycles/6359-dlocal-br-bank-form-ui/request.md">dp-payments-ai — request.md</a>
+    </p>
+
+    <h2>At a glance — what this is &amp; why we’re doing it</h2>
+    <p><strong>REVPAY-6359</strong> improves <strong>Brazil dLocal payout bank</strong> capture in the revenue dashboard (<strong>first-time setup</strong> and <strong>payout settings</strong>) with a <strong>searchable bank list</strong> aligned to dLocal’s official <a href="https://docs.dlocal.com/docs/brazil-payouts">Brazil payouts</a> catalog, clearer <strong>placeholders</strong>, always-on <strong>CPF/CNPJ / BRL</strong> guidance, and <strong>bank-specific</strong> branch/account hints—so fewer bad details reach dLocal.</p>
+    <p>On BroadDB we still see <strong>dozens of stuck or rejected bank cases per month</strong> (e.g. CRM <code>REJECTED_ACCOUNT_NOT_FOUND</code> on <code>crm_marketplace_payment_account.eventually_due</code> and marketplace-account <code>bank_account_status = REJECTED</code>—often in the <strong>~20–40/month</strong> range in recent months depending on definition; internal query logs in the PM workspace: <code>2026-04-16_12-23-06_br-dlocal-REJECTED_ACCOUNT_NOT_FOUND-monolith</code> and <code>2026-04-16_12-10-02_br-dlocal-bank-account-rejected</code>).</p>
+    <p>Doctors often <strong>stall or abandon</strong> the step because <strong>bank codes and branch/account formats</strong> are hard to remember when the UI is mostly free text—this change targets that friction directly.</p>
+
+    <hr />
+
+    <h2>1. Executive summary — cohort scale (marketplace-account)</h2>
+    <div class="callout"><strong>Measured friction (BroadDB, 2026-04-16):</strong> among <strong>4,325</strong> Brazil <strong>dLocal</strong> marketplace accounts created since <strong>2025-09-01</strong>, <strong>225 (~5.2%)</strong> currently have <code>bank_account_status = 'REJECTED'</code> from dLocal — payout bank <strong>not accepted</strong>. <strong>220</strong> of those are still <code>status = active</code> at marketplace-account level. <strong>Parallel to the Mexico wallet story:</strong> Mexico quantifies <strong>patient pay-in TPV</strong>; this quantifies <strong>provider-side bank acceptance</strong> for payouts — both are material, not niche.</div>
+
+    <hr />
+
+    <h2>2. What we are delivering (short)</h2>
+    <ul>
+      <li><strong>Autocomplete bank code</strong> — find bank by <strong>code or name</strong>; options follow dLocal’s official Brazil bank list (e.g. <em>033 — Banco Santander Brasil S.A.</em>).</li>
+      <li><strong>Placeholders</strong> that match how doctors read agency/account on statements or banking apps.</li>
+      <li><strong>Always-visible guidance</strong> — account must match <strong>CPF/CNPJ</strong> on file; <strong>BRL</strong> account required; incorrect details can cause <strong>failures</strong>.</li>
+      <li><strong>Conditional help</strong> for major banks (BB, Santander, Caixa, Bradesco, Itaú, HSBC Brasil, Inter) + generic fallback — <strong>same UX</strong> in onboarding and payout settings.</li>
+    </ul>
+    <p><strong>Prototypes:</strong> <a href="https://annamariakrol.github.io/brazil-payout-bank-prototype/">Onboarding</a> · <a href="https://annamariakrol.github.io/brazil-payout-bank-prototype/payouts-settings.html">Payout settings</a></p>
+
+    <hr />
+
+    <h2>3. Why this is a major business blocker</h2>
+    <ol>
+      <li><strong>Activation ≠ only identity (KYC)</strong> — without <strong>valid payout bank details</strong> accepted by dLocal, the doctor is not in a “clean” end state for marketplace payouts.</li>
+      <li><strong>Errors are expensive at scale</strong> — support load, repeated submissions, and calendar days without payouts erode trust with high-value clinics.</li>
+      <li><strong>High leverage fix</strong> — primarily <strong>doctor-facing UX + copy + maintained bank list</strong>, aligned to dLocal’s own documentation.</li>
+    </ol>
+
+    <hr />
+
+    <h2>4. Data evidence (BroadDB — Brazil marketplace-account)</h2>
+    <p><strong>Environment:</strong> <code>zl_marketplaceaccount_br_broad.account</code> · <strong>Cohort:</strong> <code>type = 'd_local'</code>, not deleted, <code>created_at &gt;= '2025-09-01'</code> · <strong>Run:</strong> 2026-04-16 · Internal query log folder name: <code>2026-04-16_12-10-02_br-dlocal-bank-account-rejected</code> (SQL + markdown results alongside other PM workspace queries).</p>
+
+    <h3>4.1 dLocal bank account <code>REJECTED</code></h3>
+    <div class="table-wrap">
+      <table class="metrics">
+        <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Accounts in cohort</td><td><strong>4,325</strong></td></tr>
+          <tr><td><code>bank_account_status = 'REJECTED'</code></td><td><strong>225</strong> (~<strong>5.2%</strong>)</td></tr>
+          <tr><td>Of those, marketplace <code>status = 'active'</code></td><td><strong>220</strong></td></tr>
+          <tr><td><code>bank_account_status = 'ACTIVE'</code></td><td>3,241</td></tr>
+          <tr><td><code>bank_account_status</code> IS NULL</td><td>854</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><code>bank_account_status</code> is updated from <strong>dLocal webhooks</strong> in <strong>marketplace-account-app</strong>. <strong>REJECTED</strong> means dLocal did not accept the payout bank account — causes are <strong>not only typos</strong>, but this is the stable operational signal for “bank leg failed provider validation”.</p>
+
+    <h3>4.2 Monthly new accounts + bank <code>REJECTED</code> still on file</h3>
+    <div class="table-wrap">
+      <table class="metrics">
+        <thead><tr><th>Month</th><th>Accounts created</th><th>Bank REJECTED (subset)</th></tr></thead>
+        <tbody>
+          <tr><td>2026-04*</td><td>250</td><td>20</td></tr>
+          <tr><td>2026-03</td><td>941</td><td>24</td></tr>
+          <tr><td>2026-02</td><td>642</td><td>9</td></tr>
+          <tr><td>2026-01</td><td>697</td><td>10</td></tr>
+          <tr><td>2025-12</td><td>487</td><td>3</td></tr>
+          <tr><td>2025-11</td><td>514</td><td>32</td></tr>
+          <tr><td>2025-10</td><td>318</td><td>38</td></tr>
+          <tr><td>2025-09</td><td>476</td><td>89</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>*</strong> April 2026 is <strong>partial</strong> in the snapshot. “Bank REJECTED (subset)” = accounts <strong>created in that month</strong> whose <strong>current</strong> status is still <code>REJECTED</code>.</p>
+
+    <h3>4.3 Optional — median time-to-onboarded</h3>
+    <p>For SLA-style onboarding times, use the internal <em>dLocal Onboarding Time Analysis</em> — <strong>different SQL/joins</strong>; do not mix those month totals with §4.2 without reconciling definitions.</p>
+
+    <hr />
+
+    <h2>5. References</h2>
+    <ul>
+      <li>Jira: <a href="https://docplanner.atlassian.net/browse/REVPAY-6359">REVPAY-6359</a></li>
+      <li>Scope / ACs: <a href="https://github.com/DocPlanner/dp-payments-ai/blob/main/specs/features/marketplace-payment-panel/cycles/6359-dlocal-br-bank-form-ui/request.md">dp-payments-ai — request.md</a></li>
+      <li>dLocal doc: <a href="https://docs.dlocal.com/docs/brazil-payouts">Brazil payouts</a></li>
+    </ul>
+
+    <hr />
+
+    <h2>6. Limitations</h2>
+    <ol>
+      <li><strong>BroadDB is anonymised dev data</strong> — directional evidence, not audited financials.</li>
+      <li><strong><code>REJECTED</code></strong> is a provider bank-account outcome — not automatically “wrong digit typed”; still the right KPI for payout activation risk.</li>
+      <li>Personal workflow briefing — not affiliated with the company <strong>dLocal</strong>.</li>
+    </ol>
+
+    <p class="footnote">Prepared for stakeholder circulation. Authoritative delivery spec: Jira REVPAY-6359 + linked request.md in dp-payments-ai.</p>
+  </article>
+</body>
+</html>
