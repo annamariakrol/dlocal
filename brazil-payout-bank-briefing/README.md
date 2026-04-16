@@ -32,6 +32,8 @@
 
 **Interactive prototypes:** [Onboarding flow](https://annamariakrol.github.io/brazil-payout-bank-prototype/) · [Payout settings](https://annamariakrol.github.io/brazil-payout-bank-prototype/payouts-settings.html)
 
+**Demo (screen recording):** the [HTML briefing](https://annamariakrol.github.io/dlocal/brazil-payout-bank-briefing/briefing.html) embeds a **~25&nbsp;s silent MP4** excerpt of the improved bank flow (~250&nbsp;KB). Direct file link: [bank-account-ui-preview.mp4](./assets/bank-account-ui-preview.mp4) · [same file on Pages](https://annamariakrol.github.io/dlocal/brazil-payout-bank-briefing/assets/bank-account-ui-preview.mp4). *(Full source capture was ~47&nbsp;s; the repo stores this short excerpt for stakeholders, not the original `.mov`.)*
+
 ---
 
 ## 3. Why this is a major business blocker (plain language)
