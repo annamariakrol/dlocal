@@ -1,6 +1,6 @@
 # Mexico: dual wallets (Stripe + dLocal) — stakeholder briefing
 
-**Audience:** Business stakeholders — product, commercial, medical leadership, and engineering leadership  
+**Audience:** Business stakeholders  
 **Purpose:** Standalone read — context, **why we are doing this**, and **quantified risk** if Stripe wallet were turned off when dLocal wallet is enabled  
 **Ticket / epic:** [REVPAY-6358](https://docplanner.atlassian.net/browse/REVPAY-6358)  
 **Product request (PR):** [DocPlanner/dp-payments-ai#255](https://github.com/DocPlanner/dp-payments-ai/pull/255)
