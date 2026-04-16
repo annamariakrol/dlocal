@@ -11,3 +11,5 @@ Static **UX prototype** for Brazilian identity document capture (Doctoralia Paga
 **Disclaimer:** This repository is a **personal / Docplanner workflow mock-up**. It is **not** affiliated with, endorsed by, or maintained by **dLocal** (the payments company). The name is used only as a convenient label for the Brazil marketplace payments context.
 
 **Mexico (INE/licencia + CSF):** [annamariakrol.github.io/dlocal/mx/](https://annamariakrol.github.io/dlocal/mx/)
+
+**Mexico — dual wallets (Stripe + dLocal, REVPAY-6358 stakeholder briefing):** [annamariakrol.github.io/dlocal/mexico-dual-wallets/](https://annamariakrol.github.io/dlocal/mexico-dual-wallets/) · [README on GitHub](https://github.com/annamariakrol/dlocal/blob/main/mexico-dual-wallets/README.md)
