@@ -123,7 +123,7 @@ TPV is the **sum of payment amounts** per calendar month (by payment date in the
 | 2023-11 | 543,968.00 | 672 |
 | 2023-10 | 175.00 | 7 |
 
-**Takeaway:** monthly saved-card TPV in MX is already in the **multi-million MXN** range in recent full months — i.e. **material revenue exposure** if the wallet lane is disrupted.
+**Takeaway:** All monthly numbers in the table are **per calendar month** (not a running total for the year). For example, **March 2026** alone shows **7,626** saved Stripe–wallet marketplace transactions and **7,265,787 MXN** TPV on this BroadDB snapshot — that is **one month’s** volume, not January+February+March combined. Recent full months sit in a similar **multi-million MXN** band, so disabling the Stripe wallet when enabling dLocal wallet carries **real risk of monthly online pay-in decline and churn**, not a marginal edge case.
 
 ---
 
@@ -131,7 +131,7 @@ TPV is the **sum of payment amounts** per calendar month (by payment date in the
 
 | Stakeholder concern | How the data helps | How the feature (request) answers |
 |--------------------|--------------------|-----------------------------------|
-| “Is Stripe wallet marginal?” | **No** — tens of thousands of authorised cards, thousands of monthly transactions, multi-million MXN TPV. | Dual-wallet design keeps Stripe wallet **alive** while dLocal wallet is introduced. |
+| “Is Stripe wallet marginal?” | **No** — large authorised card base (~74k cards / ~68k patients). A **single** recent full month (e.g. **Mar 2026**) already shows **~7.6k** transactions and **~7.3M MXN** TPV from saved Stripe card pay-ins alone — **per month**, not year-to-date. | Dual-wallet design keeps Stripe wallet **alive** while dLocal wallet is introduced. |
 | “Do patients actually reuse saved cards?” | **Yes** — thousands of patients with **>1** booking on the **same** saved card in 2026 alone. | Per-payment / per-provider wallet rules avoid forcing everyone back to **full card entry**. |
 | “What breaks if we flip a single global switch?” | Saved-card lane is **economically meaningful**; friction hits **repeat payers** hardest. | Request defines **symmetric** Stripe/dLocal behaviour, **combined `/wallet`**, dedupe, and rollout considerations — aimed at **no pay-in cliff**. |
 
