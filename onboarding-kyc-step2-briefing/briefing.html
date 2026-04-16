@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>dLocal marketplace onboarding step 2 (MX &amp; BR) — stakeholder briefing | REVPAY-6371</title>
+  <style>
+    :root {
+      --teal: #00b5b5;
+      --teal-dark: #007d7d;
+      --bg: #f0f3f5;
+      --card: #fff;
+      --border: #dde3e8;
+      --text: #1a1a1a;
+      --muted: #5c6570;
+      --heat-high: #f8d7da;
+      --heat-mid: #fde8ec;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 1rem;
+    }
+    .nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1.25rem;
+      font-size: 0.9rem;
+    }
+    .nav a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    .nav a:hover { text-decoration: underline; }
+    article {
+      max-width: 52rem;
+      margin: 0 auto;
+      padding: 1.75rem 1.25rem 3.5rem;
+    }
+    h1 { font-size: 1.65rem; font-weight: 700; margin: 0 0 0.35rem; line-height: 1.25; }
+    .lede { color: var(--muted); margin: 0 0 1.5rem; font-size: 0.95rem; }
+    .lede a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    .lede a:hover { text-decoration: underline; }
+    h2 { font-size: 1.2rem; margin: 2rem 0 0.75rem; color: var(--teal-dark); border-bottom: 2px solid var(--teal); padding-bottom: 0.25rem; }
+    h3 { font-size: 1.05rem; margin: 1.35rem 0 0.5rem; }
+    p { margin: 0 0 0.85rem; }
+    ul, ol { margin: 0.5rem 0 0.85rem; padding-left: 1.35rem; }
+    li { margin-bottom: 0.35rem; }
+    a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { font-weight: 650; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 1.75rem 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.86em;
+      background: #eef6f6;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+    .table-wrap { overflow-x: auto; margin: 0.75rem 0 1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { padding: 0.5rem 0.65rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: #e8f7f7; font-weight: 650; white-space: nowrap; }
+    table.metrics td:not(:first-child),
+    table.metrics th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+    tr:last-child td { border-bottom: none; }
+    .row-highlight td { background: var(--heat-mid); }
+    .row-highlight strong { background: var(--heat-high); padding: 0.05em 0.2em; border-radius: 3px; }
+    .footnote { color: var(--muted); font-size: 0.9rem; font-style: italic; margin-top: 2rem; }
+    .callout {
+      background: #e8f7f7;
+      border: 1px solid #b8e0e0;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin: 0.85rem 0;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="https://annamariakrol.github.io/dlocal/">← dLocal prototypes (index)</a>
+    · <a href="https://github.com/annamariakrol/dlocal/blob/main/README.md">README (GitHub)</a>
+  </nav>
+
+  <article>
+    <h1>dLocal marketplace onboarding — step 2 (Mexico &amp; Brazil)</h1>
+    <p class="lede">
+      <strong>Audience:</strong> Business stakeholders, ops, design/engineering partners<br />
+      <strong>Purpose:</strong> Why we are improving KYC document collection — with rejection data by country<br />
+      <strong>Jira:</strong> <a href="https://docplanner.atlassian.net/browse/REVPAY-6371">REVPAY-6371</a><br />
+      <strong>Product request (cycle):</strong> <a href="https://github.com/DocPlanner/dp-payments-ai/pull/275">DocPlanner/dp-payments-ai#275</a>
+    </p>
+
+    <h2>1. What this initiative is about (short)</h2>
+    <p>Doctors and clinics in <strong>Mexico</strong> and <strong>Brazil</strong> who want marketplace payouts via <strong>dLocal</strong> must pass a <strong>KYC-style</strong> flow. <strong>Step 2</strong> is where they upload proof of identity and (where applicable) tax or company registration documents.</p>
+    <p>The <strong>REVPAY-6371</strong> cycle (scoped in <a href="https://github.com/DocPlanner/dp-payments-ai/pull/275">dp-payments-ai PR #275</a>) improves that step so that:</p>
+    <ul>
+      <li><strong>Document collection follows a clear matrix</strong> (individual vs company, MX vs BR), including an <strong>identity “picker”</strong> where more than one document type is acceptable (e.g. national ID <em>or</em> driving licence with front/back as required).</li>
+      <li><strong>Single-step uploads</strong> where only one document type applies (e.g. tax or incorporation), without a redundant type chooser.</li>
+      <li>The UI is <strong>driven by what dLocal still marks as pending</strong> for the account, so the customer always sees what is actually outstanding.</li>
+      <li>Users can <strong>capture documents in the browser with the device camera</strong> (take photo → preview → retake or confirm), reducing reliance on screenshots or poor-quality gallery photos.</li>
+      <li><strong>Rollout preference:</strong> ship <strong>Mexico and Brazil together</strong> in one logical release unless engineering flags a safety reason to stage.</li>
+    </ul>
+    <div class="callout">
+      <strong>Why it matters for ops:</strong> dLocal rejects many uploads flagged as <code>documents_screen_photo</code> (screen captures). Giving a <strong>first-class camera path</strong> and clearer document choice directly targets that failure mode.
+    </div>
+
+    <hr />
+
+    <h2>2. Rejection reasons — data overview (ops dashboard)</h2>
+    <p>Figures below come from the internal report <strong>“Not Approved Reason”</strong> for <strong>ACCOUNTS REJECTED / BANK REJECTED</strong>, filtered by country (same metric family ops uses when discussing marketplace account quality).</p>
+
+    <h3>Mexico — top rejection codes</h3>
+    <p><strong>Total rows in extract:</strong> 335 rejections (sum of listed codes).</p>
+    <div class="table-wrap">
+      <table class="metrics">
+        <thead>
+          <tr><th>Error code</th><th>#</th><th>% of MX total</th></tr>
+        </thead>
+        <tbody>
+          <tr class="row-highlight"><td><code>documents_screen_photo</code></td><td>155</td><td><strong>46.3%</strong></td></tr>
+          <tr><td><code>REJECTED_TAX_ID_NOT_MATCH</code></td><td>41</td><td>12.2%</td></tr>
+          <tr><td><code>documents_invalid</code></td><td>27</td><td>8.1%</td></tr>
+          <tr><td>Bank account rejected by dLocal</td><td>20</td><td>6.0%</td></tr>
+          <tr><td><code>documents_missmatch</code></td><td>18</td><td>5.4%</td></tr>
+          <tr><td><code>documents_expired</code></td><td>18</td><td>5.4%</td></tr>
+          <tr><td><code>documents_same_image</code></td><td>18</td><td>5.4%</td></tr>
+          <tr><td><code>documents_missing_fields</code></td><td>18</td><td>5.4%</td></tr>
+          <tr><td><code>legal_representative_not_found_in_company</code></td><td>11</td><td>3.3%</td></tr>
+          <tr><td><code>documents_grayscale_image</code></td><td>5</td><td>1.5%</td></tr>
+          <tr><td><code>document_not_readable</code></td><td>3</td><td>0.9%</td></tr>
+          <tr><td><code>documents_cropped</code></td><td>1</td><td>0.3%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Brazil — same metric, for contrast</h3>
+    <p><strong>Total rows in extract:</strong> 522 rejections. <code>documents_screen_photo</code> is material but <strong>not dominant</strong> the way it is in Mexico.</p>
+    <div class="table-wrap">
+      <table class="metrics">
+        <thead>
+          <tr><th>Error code</th><th>#</th><th>% of BR total</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>documents_unexpected_data</code></td><td>100</td><td>19.2%</td></tr>
+          <tr><td><code>documents_invalid</code></td><td>92</td><td>17.6%</td></tr>
+          <tr><td><code>documents_expired</code></td><td>70</td><td>13.4%</td></tr>
+          <tr class="row-highlight"><td><code>documents_screen_photo</code></td><td>56</td><td><strong>10.7%</strong></td></tr>
+          <tr><td><code>documents_same_image</code></td><td>47</td><td>9.0%</td></tr>
+          <tr><td><code>REJECTED_ACCOUNT_NOT_FOUND</code></td><td>34</td><td>6.5%</td></tr>
+          <tr><td><code>documents_missing_fields</code></td><td>30</td><td>5.7%</td></tr>
+          <tr><td><code>documents_missmatch</code></td><td>21</td><td>4.0%</td></tr>
+          <tr><td><code>documents_grayscale_image</code></td><td>20</td><td>3.8%</td></tr>
+          <tr><td><code>invalid_bank_branch</code></td><td>18</td><td>3.4%</td></tr>
+          <tr><td colspan="3" style="color: var(--muted); font-size: 0.88rem;">…remaining codes each &lt; 2% (invalid account number, blurry text, bank name, etc.)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3. Takeaway</h3>
+    <ul>
+      <li>In <strong>Mexico</strong>, <strong>almost half</strong> of sampled rejections are <code>documents_screen_photo</code> — the strongest single signal that <strong>how</strong> users capture and submit ID matters as much as <strong>which</strong> document we ask for.</li>
+      <li>In <strong>Brazil</strong>, screenshot-style rejects are <strong>still top-four</strong> (~11%) but compete with <strong>data validity and expiry</strong> issues; the product still benefits from camera capture and clearer identity choice, while ops may prioritise different follow-ups per code.</li>
+    </ul>
+
+    <hr />
+
+    <p class="footnote">
+      <strong>Disclaimer:</strong> This repository is a personal / Docplanner workflow space. It is not affiliated with dLocal (the company). Dashboard numbers are a <strong>point-in-time export</strong> from internal tooling; refresh the underlying report for live totals. Formal scope and acceptance criteria: <a href="https://github.com/DocPlanner/dp-payments-ai/pull/275">dp-payments-ai#275</a> and Jira <a href="https://docplanner.atlassian.net/browse/REVPAY-6371">REVPAY-6371</a>.
+    </p>
+  </article>
+</body>
+</html>
