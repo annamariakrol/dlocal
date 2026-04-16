@@ -158,26 +158,4 @@ TPV = `SUM(payment.amount)` per calendar month of `payment.created_at`.
 
 ---
 
-## 7. Appendix — reproducible SQL (monthly TPV, MXN)
-
-Excludes April 2026 as an incomplete month; newest month first.
-
-```sql
-SELECT DATE_FORMAT(p.created_at, '%Y-%m') AS month_mx,
-       SUM(p.amount) AS monthly_tpv_mxn,
-       COUNT(*) AS transactions
-FROM zl_crm_mx_broad.payment p
-JOIN zl_crm_mx_broad.user_credit_card_payment uccp
-  ON uccp.id = p.payment_object_id
-WHERE p.type = 'marketplace_payment'
-  AND p.status = 'captured'
-  AND p.payment_object_class = 'UserCreditCardPayment'
-  AND uccp.credit_card_id IS NOT NULL
-  AND NOT (p.created_at >= '2026-04-01' AND p.created_at < '2026-05-01')
-GROUP BY DATE_FORMAT(p.created_at, '%Y-%m')
-ORDER BY month_mx DESC;
-```
-
----
-
 *Prepared for stakeholder circulation. For the authoritative delivery spec, use PR #255 and Jira REVPAY-6358.*

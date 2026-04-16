@@ -63,16 +63,6 @@
     table.metrics td:not(:first-child),
     table.metrics th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
     tr:last-child td { border-bottom: none; }
-    pre {
-      margin: 0.75rem 0 1rem;
-      padding: 1rem 1.1rem;
-      background: #1e2933;
-      color: #e8eef2;
-      border-radius: 8px;
-      overflow-x: auto;
-      font-size: 0.82rem;
-      line-height: 1.45;
-    }
     .footnote { color: var(--muted); font-size: 0.9rem; font-style: italic; margin-top: 2rem; }
     .callout {
       background: #e8f7f7;
@@ -266,24 +256,6 @@
       <li>Metrics count <strong>payments-app captured pay-ins</strong> with the Stripe saved-card object — reconciliation to finance / NetSuite may differ slightly.</li>
       <li><strong>dLocal wallet</strong> volume is <strong>not</strong> the subject of this extract; this doc is intentionally <strong>Stripe-wallet evidence</strong> for the “do not disable” argument.</li>
     </ol>
-
-    <hr />
-
-    <h2>7. Appendix — reproducible SQL (monthly TPV, MXN)</h2>
-    <p>Excludes April 2026 as an incomplete month; newest month first.</p>
-<pre><code>SELECT DATE_FORMAT(p.created_at, '%Y-%m') AS month_mx,
-       SUM(p.amount) AS monthly_tpv_mxn,
-       COUNT(*) AS transactions
-FROM zl_crm_mx_broad.payment p
-JOIN zl_crm_mx_broad.user_credit_card_payment uccp
-  ON uccp.id = p.payment_object_id
-WHERE p.type = 'marketplace_payment'
-  AND p.status = 'captured'
-  AND p.payment_object_class = 'UserCreditCardPayment'
-  AND uccp.credit_card_id IS NOT NULL
-  AND NOT (p.created_at &gt;= '2026-04-01' AND p.created_at &lt; '2026-05-01')
-GROUP BY DATE_FORMAT(p.created_at, '%Y-%m')
-ORDER BY month_mx DESC;</code></pre>
 
     <p class="footnote">Prepared for stakeholder circulation. For the authoritative delivery spec, use PR #255 and Jira REVPAY-6358. Personal workflow note — not affiliated with the company <strong>dLocal</strong>.</p>
   </article>
