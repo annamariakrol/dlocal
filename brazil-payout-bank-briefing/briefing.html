@@ -130,9 +130,10 @@
     <hr />
 
     <h2>4. Data evidence (BroadDB — Brazil marketplace-account)</h2>
-    <p><strong>Environment:</strong> <code>zl_marketplaceaccount_br_broad.account</code> · <strong>Cohort:</strong> <code>type = 'd_local'</code>, not deleted, <code>created_at &gt;= '2025-09-01'</code> · <strong>Run:</strong> 2026-04-16 · Internal query log folder name: <code>2026-04-16_12-10-02_br-dlocal-bank-account-rejected</code> (SQL + markdown results alongside other PM workspace queries).</p>
+    <p><strong>Environment:</strong> <code>zl_marketplaceaccount_br_broad.account</code> · <strong>Cohort:</strong> <code>type = 'd_local'</code>, not deleted, <code>created_at &gt;= '2025-09-01'</code> (<strong>no upper bound</strong> on <code>created_at</code> — from 1 Sep 2025 through the DB snapshot) · <strong>Run (snapshot):</strong> 2026-04-16 · Internal query log folder name: <code>2026-04-16_12-10-02_br-dlocal-bank-account-rejected</code> (SQL + markdown results alongside other PM workspace queries). <strong>Note:</strong> <code>bank_account_status</code> figures are <strong>as observed on that date</strong>, not “rejections that happened inside a calendar month”.</p>
 
     <h3>4.1 dLocal bank account <code>REJECTED</code></h3>
+    <p><strong>Table scope:</strong> same cohort as §4 — membership by <code>created_at &gt;= 2025-09-01</code>; status columns are a <strong>point-in-time snapshot on 2026-04-16</strong>.</p>
     <div class="table-wrap">
       <table class="metrics">
         <thead><tr><th>Metric</th><th>Value</th></tr></thead>

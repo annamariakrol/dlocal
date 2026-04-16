@@ -43,11 +43,13 @@ On **DocPlanner BroadDB** (`zl_marketplaceaccount_br_broad`), among **dLocal** a
 ## 4. Data evidence (BroadDB — Brazil marketplace-account)
 
 **Environment:** DocPlanner **BroadDB**, database **`zl_marketplaceaccount_br_broad`**, table **`account`**.  
-**Cohort:** `type = 'd_local'`, `deleted_at IS NULL`, `created_at >= '2025-09-01'`.  
+**Cohort:** `type = 'd_local'`, `deleted_at IS NULL`, `created_at >= '2025-09-01'` (**no upper bound** on `created_at` — “from 1 Sep 2025 through the DB snapshot”).  
 **Query log (internal):** `Database structure with AI/queries/2026-04-16_12-10-02_br-dlocal-bank-account-rejected/` — `query.sql` + `result.md`.  
-**Run date:** 2026-04-16.
+**Run date (snapshot):** 2026-04-16 — `bank_account_status` values below are **as observed on that date**, not a count of rejection *events* inside a month.
 
 ### 4.1 dLocal bank account `REJECTED` (payout bank not accepted)
+
+**Table scope:** same cohort as §4; **date range on membership** = account `created_at` **≥ 2025-09-01**; **status columns** = **point-in-time on 2026-04-16**.
 
 | Metric | Value |
 |--------|------:|
