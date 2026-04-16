@@ -11,13 +11,15 @@
 
 ## At a glance — what this is & why we’re doing it
 
-**REVPAY-6359** improves **Brazil dLocal payout bank** capture in the revenue dashboard (**first-time setup** and **payout settings**) with a **searchable bank list** aligned to dLocal’s official [Brazil payouts](https://docs.dlocal.com/docs/brazil-payouts) catalog, clearer **placeholders**, always-on **CPF/CNPJ / BRL** guidance, and **bank-specific** branch/account hints—so fewer bad details reach dLocal. On BroadDB we still see **dozens of stuck or rejected bank cases per month** (e.g. CRM **`REJECTED_ACCOUNT_NOT_FOUND`** on `crm_marketplace_payment_account.eventually_due` and marketplace-account **`bank_account_status = REJECTED`**—often in the **~20–40/month** range in recent months depending on definition; internal query logs: `2026-04-16_12-23-06_br-dlocal-REJECTED_ACCOUNT_NOT_FOUND-monolith` and `2026-04-16_12-10-02_br-dlocal-bank-account-rejected`). Doctors often **stall or abandon** the step because **bank codes and branch/account formats** are hard to remember when the UI is mostly free text—this change targets that friction directly.
+**REVPAY-6359** improves **Brazil dLocal payout bank** capture in the revenue dashboard (**first-time setup** and **payout settings**) with a **searchable bank list** aligned to dLocal’s official [Brazil payouts](https://docs.dlocal.com/docs/brazil-payouts) catalog, clearer **placeholders**, always-on **CPF/CNPJ / BRL** guidance, and **bank-specific** branch/account hints—so fewer bad details reach dLocal. On BroadDB we still see **dozens of stuck or rejected bank cases per month** (e.g. CRM **`REJECTED_ACCOUNT_NOT_FOUND`** on `crm_marketplace_payment_account.eventually_due` and marketplace-account **`bank_account_status = REJECTED`**—often in the **~20–40/month** range in recent months depending on definition; internal query logs: `2026-04-16_12-23-06_br-dlocal-REJECTED_ACCOUNT_NOT_FOUND-monolith` and `2026-04-16_12-10-02_br-dlocal-bank-account-rejected`). Doctors often **stall or abandon** the step because **bank codes and branch/account formats** are hard to remember when the UI is mostly free text—this change targets that friction directly. **For exec readouts, lead with the monthly band** (recurring drag on activation); **avoid** framing wide-cohort **snapshot** counts as “we ignored merchants since September” — see §1.
 
 ---
 
-## 1. Executive summary — cohort scale (marketplace-account)
+## 1. Executive summary — headline vs. snapshot (how to read the numbers)
 
-On **DocPlanner BroadDB** (`zl_marketplaceaccount_br_broad`), among **dLocal** accounts created since **2025-09-01**, **225 / 4,325 (~5.2%)** currently have **`bank_account_status = REJECTED`** — i.e. dLocal did **not** accept the payout bank account (via webhooks). **220** of those rows are still **`status = active`** at marketplace-account level: doctors who are **not payout-unblocked** on the bank leg despite an otherwise active account. That order of magnitude turns **REVPAY-6359** from “nice UX” into a **measurable activation / payout friction** problem at BR scale.
+**Business headline:** Brazil dLocal **payout bank** is a **recurring monthly leak** on the order of **tens of merchants** (~**20–40/month**, definition-dependent — CRM error vs. marketplace `bank_account_status`, see §4.2) who **stall, retry, or drop** because the step is **too easy to get wrong**. **REVPAY-6359** is the **smooth, guided experience** that reduces that **ongoing** tax — not a debate about a single cumulative backlog number.
+
+**Stock (supplementary):** on a **2026-04-16** BroadDB snapshot, among **d_local** accounts **created since 2025-09-01**, **225 / 4,325 (~5.2%)** had **`bank_account_status = REJECTED`** (dLocal did not accept the bank for payouts); **220** of those were still **`status = active`** at marketplace-account level. That is a **balance at a point in time** over a **wide creation window** — useful for **depth / risk**, easy to **misread** as “we knowingly left ~225 merchants broken since September.” Use it **with the monthly table (§4.2)** and the **~20–40/month** story, not instead of them.
 
 ---
 
@@ -62,6 +64,8 @@ On **DocPlanner BroadDB** (`zl_marketplaceaccount_br_broad`), among **dLocal** a
 `bank_account_status` is maintained from **dLocal webhooks** (`BankAccountStatusUpdatedDLocalMessage` path in **marketplace-account-app**). **`REJECTED`** means dLocal did not validate/accept that bank account for payouts — **drivers are not only typos** (fraud / policy / other provider reasons can appear here), but this is the **closest stable operational metric** we expose for “doctor submitted bank details; dLocal said no”.
 
 ### 4.2 New accounts per month (same cohort definition) + bank `REJECTED` still on file
+
+**Prefer this table for exec storytelling** — it shows **monthly flow** (new accounts vs. how many of that month’s cohort still show bank `REJECTED` on the snapshot date), which matches the “**tens of merchants per month**” headline better than §4.1 alone.
 
 | Month | Accounts created | `bank_account_status = REJECTED` (subset) |
 |-------|----------------:|---------------------------------------------:|
