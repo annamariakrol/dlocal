@@ -235,6 +235,7 @@
       <a href="#value">Value Proposition</a>
       <a href="#how">How It Works</a>
       <a href="#metrics">Success Metrics</a>
+      <a href="#badge">Badge Loophole Fix</a>
       <a href="#scope">Scope</a>
       <a href="#rollout">Rollout</a>
       <a href="#acs">Acceptance Criteria</a>
@@ -384,6 +385,83 @@
           <div class="stat-label">Total payin GMV / 30d</div>
         </div>
       </div>
+    </div>
+
+    <!-- BADGE LOOPHOLE FIX -->
+    <div class="card" id="badge">
+      <h2>Additional Benefit: Search Badge Loophole Fix</h2>
+      <p>Doctors and facilities with the "online payments" badge in search results are currently boosted even if <strong>none</strong> of their services can actually be paid online. A key driver of this loophole is "price from" services — they're excluded from the payment flow, but the badge is determined at the address level, not the service level.</p>
+      <p style="margin-top:0.5rem;">This feature <strong>directly fixes the price-from portion</strong> of that loophole by making those services payable.</p>
+
+      <h3>Impact by Country (addresses with payments badge where all services are "price from")</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Country</th>
+            <th class="text-right">PF loophole addresses</th>
+            <th class="text-right">Fully fixed</th>
+            <th class="text-right">Improved</th>
+            <th class="text-right">% fully fixed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-bold">Poland</td>
+            <td class="text-right">201</td>
+            <td class="text-right">169</td>
+            <td class="text-right">32</td>
+            <td class="text-right text-bold">84%</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Italy</td>
+            <td class="text-right">192</td>
+            <td class="text-right">149</td>
+            <td class="text-right">43</td>
+            <td class="text-right text-bold">78%</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Spain</td>
+            <td class="text-right">108</td>
+            <td class="text-right">78</td>
+            <td class="text-right">30</td>
+            <td class="text-right text-bold">72%</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Mexico</td>
+            <td class="text-right">321</td>
+            <td class="text-right">214</td>
+            <td class="text-right">107</td>
+            <td class="text-right text-bold">67%</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Brazil</td>
+            <td class="text-right">518</td>
+            <td class="text-right">399</td>
+            <td class="text-right">119</td>
+            <td class="text-right text-bold">77%</td>
+          </tr>
+          <tr class="row-total">
+            <td>Total</td>
+            <td class="text-right">1,340</td>
+            <td class="text-right">1,009</td>
+            <td class="text-right">331</td>
+            <td class="text-right">75%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-box highlight-green">
+        <strong>What this means</strong>
+        <p><strong>1,009 addresses</strong> (doctors + facilities) currently display a misleading "online payments" badge because their only services are "price from." Once this feature ships, those services become genuinely payable — the badge becomes accurate. Another <strong>331 addresses</strong> improve (their price-from services become payable, though they still have some no-price services that remain unpayable).</p>
+      </div>
+
+      <div class="highlight-box highlight-blue">
+        <strong>Definitions</strong>
+        <p><strong>Fully fixed:</strong> ALL services on the address are "price from" with a valid minimum price — once prepayment is enabled, every service is payable and the badge is 100% accurate.<br>
+        <strong>Improved:</strong> The address has a mix of "price from" services (now payable) and services with no price at all (still not payable) — the badge becomes partially accurate.</p>
+      </div>
+
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.75rem;">Data as of 2026-04-20. Includes both individual doctor and facility addresses from the payment search index. Re-runnable queries: see <code>queries/2026-04-20_15-30-00_price-from-badge-loophole/</code>.</p>
     </div>
 
     <!-- SCOPE -->
