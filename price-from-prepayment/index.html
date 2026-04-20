@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>Price From Prepayment — Feature Briefing | DP Payments</title>
+  <style>
+    :root {
+      --teal: #00b5b5;
+      --teal-dark: #007d7d;
+      --bg: #f5f7f9;
+      --card: #fff;
+      --border: #e2e8f0;
+      --text: #1a202c;
+      --text-muted: #64748b;
+      --accent-green: #059669;
+      --accent-green-bg: #ecfdf5;
+      --accent-blue: #2563eb;
+      --accent-blue-bg: #eff6ff;
+      --accent-amber: #d97706;
+      --accent-amber-bg: #fffbeb;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
+      color: #fff;
+      padding: 2.5rem 1.5rem 2rem;
+    }
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .header p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.75rem;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--teal-dark);
+    }
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 1rem 0 0.5rem;
+      color: var(--text);
+    }
+    .card p, .card li {
+      font-size: 0.9rem;
+      color: #334155;
+    }
+    .card ul {
+      padding-left: 1.25rem;
+      margin: 0.5rem 0;
+    }
+    .card li {
+      margin-bottom: 0.35rem;
+    }
+    .highlight-box {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin: 0.75rem 0;
+    }
+    .highlight-green { background: var(--accent-green-bg); border-left: 4px solid var(--accent-green); }
+    .highlight-blue { background: var(--accent-blue-bg); border-left: 4px solid var(--accent-blue); }
+    .highlight-amber { background: var(--accent-amber-bg); border-left: 4px solid var(--accent-amber); }
+    .highlight-box strong { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.25rem; }
+    .highlight-green strong { color: var(--accent-green); }
+    .highlight-blue strong { color: var(--accent-blue); }
+    .highlight-amber strong { color: var(--accent-amber); }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin: 0.75rem 0;
+    }
+    .stat-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      text-align: center;
+    }
+    .stat-box .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+    }
+    .stat-box .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0;
+      font-size: 0.85rem;
+    }
+    th {
+      background: var(--bg);
+      font-weight: 600;
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    tr:last-child td { border-bottom: none; }
+    .text-right { text-align: right; }
+    .text-bold { font-weight: 600; }
+    .row-total { background: var(--bg); font-weight: 600; }
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .tag-phase1 { background: #dbeafe; color: #1d4ed8; }
+    .tag-phase2 { background: #fef3c7; color: #92400e; }
+    .tag-phase3 { background: #d1fae5; color: #065f46; }
+    .updated {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .updated a { color: var(--teal-dark); }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 700px) {
+      .two-col { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .ac-list {
+      counter-reset: ac;
+      list-style: none;
+      padding: 0;
+    }
+    .ac-list li {
+      counter-increment: ac;
+      padding: 0.5rem 0 0.5rem 2.5rem;
+      position: relative;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .ac-list li::before {
+      content: counter(ac, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      width: 2rem;
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--teal);
+      background: #f0fdfa;
+      border-radius: 4px;
+      padding: 0.1rem 0;
+    }
+    .ac-list li:last-child { border-bottom: none; }
+    .section-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .section-nav a {
+      font-size: 0.8rem;
+      color: var(--teal-dark);
+      text-decoration: none;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--card);
+    }
+    .section-nav a:hover { background: #f0fdfa; border-color: var(--teal); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-inner">
+      <h1>Price From Prepayment</h1>
+      <p>Enable online payments for variable-price services — patients prepay the minimum, settle the rest at the office.</p>
+      <span class="badge">REVPAY-6379 &middot; XL &middot; DP Payments</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <nav class="section-nav">
+      <a href="#value">Value Proposition</a>
+      <a href="#how">How It Works</a>
+      <a href="#metrics">Success Metrics</a>
+      <a href="#scope">Scope</a>
+      <a href="#rollout">Rollout</a>
+      <a href="#acs">Acceptance Criteria</a>
+      <a href="#edge-cases">Edge Cases</a>
+    </nav>
+
+    <!-- VALUE PROPOSITION -->
+    <div class="card" id="value">
+      <h2>Value Proposition for Doctors</h2>
+      <div class="two-col">
+        <div class="highlight-box highlight-green">
+          <strong>Fewer no-shows, more protected time</strong>
+          <p>Patients have financial commitment before the visit. Variable-price services get the same protection as fixed-price ones.</p>
+        </div>
+        <div class="highlight-box highlight-green">
+          <strong>Guaranteed minimum revenue per visit</strong>
+          <p>At least the minimum price is collected before the patient walks in. The rest is settled at the office, as usual.</p>
+        </div>
+      </div>
+      <div class="highlight-box highlight-blue">
+        <strong>No extra effort required</strong>
+        <p>The feature activates automatically for existing variable-price services. No reconfiguration, no new setup. Patients see clear messaging. For admin bookings, a simple toggle gives per-booking control.</p>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="card" id="how">
+      <h2>How It Works</h2>
+      <h3>Patient Booking (User)</h3>
+      <ul>
+        <li>Patient selects a "price from" service and sees: <em>"from {min_price}"</em></li>
+        <li>Payment flow collects the minimum price as a prepayment (upfront or BNPL card-save)</li>
+        <li>Clear messaging: <em>"You'll pay the minimum price online. The final price depends on the consultation — any difference will be settled at the specialist's office."</em></li>
+        <li>All notifications (SMS, WhatsApp, email, push) include "price may vary" messaging</li>
+      </ul>
+      <h3>Admin Booking (Doctor)</h3>
+      <ul>
+        <li>Doctor sees a toggle/checkbox for "price from" services on the booking form</li>
+        <li>Toggle ON: uses minimum price with "price may vary" messaging</li>
+        <li>Toggle OFF: doctor enters a fixed price, standard notifications</li>
+      </ul>
+      <h3>BNPL (Book Now Pay Later)</h3>
+      <ul>
+        <li>No-show fee = 100% of minimum price (no split into separate transactions)</li>
+        <li>Booking steps display all payment rules + "minimum price / final price may vary" messaging</li>
+      </ul>
+    </div>
+
+    <!-- SUCCESS METRICS -->
+    <div class="card" id="metrics">
+      <h2>Success Metrics &amp; Baseline Data</h2>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">Data as of 2026-04-20 &middot; Last 30 days &middot; Payment-registered customers only</p>
+
+      <h3>Primary Metric</h3>
+      <div class="highlight-box highlight-amber">
+        <strong>User booking conversion rate</strong>
+        <p>% of "price from" user bookings that go through the payment flow. Target: <strong>15-20%</strong> in Phase 1 (PL), benchmarked against ~47% fixed-price upfront conversion.</p>
+      </div>
+
+      <h3>Cross-Country Baseline — Price-From Bookings (30 days)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Country</th>
+            <th>Phase</th>
+            <th class="text-right">User bookings</th>
+            <th class="text-right">Admin bookings</th>
+            <th class="text-right">Total</th>
+            <th class="text-right">Untapped GMV/mo</th>
+            <th class="text-right">Active docs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-bold">Poland</td>
+            <td><span class="tag tag-phase1">Phase 1</span></td>
+            <td class="text-right">4,428</td>
+            <td class="text-right">4,754</td>
+            <td class="text-right text-bold">9,182</td>
+            <td class="text-right">2,570,350 PLN</td>
+            <td class="text-right">4,150</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Italy</td>
+            <td><span class="tag tag-phase2">Phase 2</span></td>
+            <td class="text-right">334</td>
+            <td class="text-right">812</td>
+            <td class="text-right text-bold">1,146</td>
+            <td class="text-right">153,165 EUR</td>
+            <td class="text-right">1,260</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Spain</td>
+            <td><span class="tag tag-phase2">Phase 2</span></td>
+            <td class="text-right">483</td>
+            <td class="text-right">2,302</td>
+            <td class="text-right text-bold">2,785</td>
+            <td class="text-right">241,882 EUR</td>
+            <td class="text-right">1,047</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Mexico</td>
+            <td><span class="tag tag-phase2">Phase 2</span></td>
+            <td class="text-right">2,590</td>
+            <td class="text-right">14,121</td>
+            <td class="text-right text-bold">16,711</td>
+            <td class="text-right">18,889,104 MXN</td>
+            <td class="text-right">1,994</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Brazil</td>
+            <td><span class="tag tag-phase2">Phase 2</span></td>
+            <td class="text-right">54</td>
+            <td class="text-right">823</td>
+            <td class="text-right text-bold">877</td>
+            <td class="text-right">372,645 BRL</td>
+            <td class="text-right">2,296</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Key Observations</h3>
+      <ul>
+        <li><strong>Mexico</strong> is the biggest opportunity by volume (16,711 bookings/mo, ~18.9M MXN)</li>
+        <li><strong>Poland</strong> has the most balanced user/admin split (~50/50), ideal for Phase 1</li>
+        <li><strong>Spain and Mexico</strong> are heavily admin-driven (4.8:1 and 5.5:1 ratio)</li>
+        <li><strong>Brazil</strong> has very few user bookings (54) — almost entirely admin</li>
+        <li>At a conservative 20% conversion on PL user bookings: <strong>~260K PLN/month in new GMV</strong></li>
+      </ul>
+
+      <h3>Poland — Fixed-Price Conversion Benchmark</h3>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-value">46.7%</div>
+          <div class="stat-label">Upfront conversion (fixed-price)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">27,175</div>
+          <div class="stat-label">Upfront payins / 30d</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">8,425</div>
+          <div class="stat-label">BNPL no-show captures / 30d</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">8.9M PLN</div>
+          <div class="stat-label">Total payin GMV / 30d</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCOPE -->
+    <div class="card" id="scope">
+      <h2>Scope</h2>
+      <div class="two-col">
+        <div>
+          <h3>In Scope</h3>
+          <ul>
+            <li>Enable payment flow for "price from" user bookings</li>
+            <li>Booking success page shows payment info</li>
+            <li>Wallet pages show "from {min_price}" with explanation</li>
+            <li>Minimum price as charged amount (upfront + BNPL)</li>
+            <li>BNPL no-show fee override to 100% of minimum</li>
+            <li>All notification channels updated with "price may vary"</li>
+            <li>Booking flow copy in all 6 locales</li>
+            <li>Admin booking toggle (price from vs fixed)</li>
+            <li>Remove platform restrictions for "price from" schedules</li>
+            <li>Doctor context in visit details drawer</li>
+            <li>Feature gate for controlled rollout</li>
+            <li>Mixed bookings (sum fixed + minimums)</li>
+            <li>Native mobile app parity</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Out of Scope</h3>
+          <ul>
+            <li>Collecting remaining difference online (Phase 2)</li>
+            <li>Doctor dashboard changes beyond context + toggle</li>
+            <li>Changes to "price from" configuration at service level</li>
+            <li>Retroactive changes to existing bookings</li>
+            <li>Automated refund when final &lt; minimum (Phase 2)</li>
+          </ul>
+          <h3>Estimated Size</h3>
+          <p><strong>XL</strong> — multi-system, 6 locales, suggest splitting into 4 stories:</p>
+          <ol style="font-size:0.85rem;padding-left:1.25rem;">
+            <li>Backend enablement + feature gate</li>
+            <li>Patient booking flow + wallet pages</li>
+            <li>Admin bookings + toggle</li>
+            <li>Notifications + doctor context</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROLLOUT -->
+    <div class="card" id="rollout">
+      <h2>Rollout Plan</h2>
+      <table>
+        <thead>
+          <tr><th>Phase</th><th>Countries</th><th>Target</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tag tag-phase1">Phase 1</span></td><td>Poland</td><td>Internal test profiles</td></tr>
+          <tr><td><span class="tag tag-phase2">Phase 2</span></td><td>Italy, Spain, Mexico, Brazil</td><td>Internal test profiles per country</td></tr>
+          <tr><td><span class="tag tag-phase3">Phase 3</span></td><td>All countries</td><td>All customers (customer communication plan to be defined)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ACCEPTANCE CRITERIA -->
+    <div class="card" id="acs">
+      <h2>Acceptance Criteria (29)</h2>
+      <ol class="ac-list">
+        <li><strong>AC-PFP-001:</strong> Feature gate ON + "price from" service = payment flow offered (mandatory or optional per doctor config)</li>
+        <li><strong>AC-PFP-002:</strong> Charged amount = doctor-configured minimum price</li>
+        <li><strong>AC-PFP-003:</strong> Minimum price of 0 = excluded from payment flow</li>
+        <li><strong>AC-PFP-004:</strong> BNPL no-show fee = 100% of minimum price (overrides doctor config)</li>
+        <li><strong>AC-PFP-005:</strong> No "remaining amount" transaction for BNPL price-from bookings</li>
+        <li><strong>AC-PFP-006:</strong> Non-price-from services: doctor's configured NSF % unchanged</li>
+        <li><strong>AC-PFP-007:</strong> Mixed bookings: sum of fixed prices + minimum prices</li>
+        <li><strong>AC-PFP-008:</strong> Booking flow shows "from {min_price}" instead of flat price</li>
+        <li><strong>AC-PFP-009:</strong> Visit options page combines price label + payment section with prepayment explanation</li>
+        <li><strong>AC-PFP-010:</strong> BNPL booking steps show standard BNPL rules + "price may vary" messaging</li>
+        <li><strong>AC-PFP-011:</strong> Confirmation screen after payment/card-save shows "minimum / may differ"</li>
+        <li><strong>AC-PFP-012:</strong> Booking success page shows payment info (currently hidden for price-from)</li>
+        <li><strong>AC-PFP-013:</strong> Wallet pages: amount + "price from" indicator + explanation + settlement instructions</li>
+        <li><strong>AC-PFP-014:</strong> Mandatory notifications (4 reminders + 1 cancellation) include "price may vary"</li>
+        <li><strong>AC-PFP-015:</strong> Optional notifications include adapted "minimum price" messaging</li>
+        <li><strong>AC-PFP-016:</strong> All notification content translated in 6 locales</li>
+        <li><strong>AC-PFP-017:</strong> Admin booking form: toggle/checkbox for price-from (designer to finalize UI)</li>
+        <li><strong>AC-PFP-018:</strong> Admin bookings: mandatory/optional payment per doctor calendar settings</li>
+        <li><strong>AC-PFP-019:</strong> Admin toggle ON: "price may vary" messaging in notifications</li>
+        <li><strong>AC-PFP-020:</strong> Visit details drawer shows prepayment context for doctor</li>
+        <li><strong>AC-PFP-021:</strong> Platform restrictions on price-from schedules removed when gate ON</li>
+        <li><strong>AC-PFP-022:</strong> Commission calculated on minimum price only</li>
+        <li><strong>AC-PFP-023:</strong> Cancellation/refund: same rules as fixed-price (upfront and BNPL)</li>
+        <li><strong>AC-PFP-024:</strong> Saved card: same flow as fixed-price; BNPL freeze identical</li>
+        <li><strong>AC-PFP-025:</strong> Reschedule: prepayment carries over</li>
+        <li><strong>AC-PFP-026:</strong> Feature gate OFF = current behavior preserved exactly</li>
+        <li><strong>AC-PFP-027:</strong> Fixed-price services: zero regression</li>
+        <li><strong>AC-PFP-028:</strong> Admin bookings for fixed-price: unchanged</li>
+        <li><strong>AC-PFP-029:</strong> Native mobile app screens reflect same "price from" messaging as web</li>
+      </ol>
+    </div>
+
+    <!-- EDGE CASES -->
+    <div class="card" id="edge-cases">
+      <h2>Edge Cases</h2>
+      <ul>
+        <li><strong>Mixed bookings:</strong> Sum fixed + minimums — payment flow not blocked</li>
+        <li><strong>Zero minimum:</strong> Excluded from payment flow (cannot charge 0)</li>
+        <li><strong>Cancellation (upfront):</strong> Same refund rules as fixed-price</li>
+        <li><strong>Cancellation (BNPL):</strong> Nothing charged in free window, standard BNPL rules apply</li>
+        <li><strong>Wallet / saved cards:</strong> Same flow as fixed-price; patient always confirms</li>
+        <li><strong>BNPL info:</strong> Booking steps show all rules + "price may vary" messaging</li>
+        <li><strong>Reschedule:</strong> Prepayment carries over</li>
+        <li><strong>Final &lt; minimum:</strong> Doctor initiates manual refund (no automation in Phase 1)</li>
+        <li><strong>Admin toggle:</strong> Price-from ON = minimum + messaging; OFF = fixed price entered by doctor</li>
+        <li><strong>Admin payment mode:</strong> Mandatory/optional per calendar settings, same as user</li>
+        <li><strong>Doctor notification:</strong> Visit details drawer shows prepayment context</li>
+        <li><strong>Commission:</strong> On deposit (minimum price) only, standard invoice label</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>References</h2>
+      <ul>
+        <li>Jira: <a href="https://docplanner.atlassian.net/browse/REVPAY-6379" target="_blank">REVPAY-6379</a></li>
+        <li>Notification copy: see REVPAY-6379 Jira comments (5 comments with full translations)</li>
+        <li>Design: pending — UI/UX mockups to follow</li>
+      </ul>
+    </div>
+
+    <p class="updated">
+      Last updated: <strong>2026-04-20</strong> &middot;
+      Owner: Anka (Product Manager, DP Payments) &middot;
+      <a href="https://docplanner.atlassian.net/browse/REVPAY-6379" target="_blank">Jira ticket</a>
+    </p>
+  </div>
+</body>
+</html>
