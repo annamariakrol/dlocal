@@ -287,7 +287,7 @@
     <!-- SUCCESS METRICS -->
     <div class="card" id="metrics">
       <h2>Success Metrics &amp; Baseline Data</h2>
-      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">Data as of 2026-04-20 &middot; Last 30 days &middot; Payment-registered customers only</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">Data as of 2026-04-20 &middot; Window: last 30 days (2026-03-21 &rarr; 2026-04-20), identical across all baseline tables below &middot; Filter: payment-active doctors (merchants with &ge;1 successful payin in the same window)</p>
 
       <h3>Primary Metric</h3>
       <div class="highlight-box highlight-amber">
@@ -356,7 +356,8 @@
             <th class="text-right">User bookings</th>
             <th class="text-right">Admin bookings</th>
             <th class="text-right">Total</th>
-            <th class="text-right">Untapped GMV/mo</th>
+            <th class="text-right">Untapped GMV/mo (local)</th>
+            <th class="text-right">Untapped GMV/mo (EUR)</th>
             <th class="text-right">Active docs</th>
           </tr>
         </thead>
@@ -368,6 +369,7 @@
             <td class="text-right">4,754</td>
             <td class="text-right text-bold">9,182</td>
             <td class="text-right">2,570,350 PLN</td>
+            <td class="text-right">605,244 EUR</td>
             <td class="text-right">4,150</td>
           </tr>
           <tr>
@@ -376,6 +378,7 @@
             <td class="text-right">334</td>
             <td class="text-right">812</td>
             <td class="text-right text-bold">1,146</td>
+            <td class="text-right">153,165 EUR</td>
             <td class="text-right">153,165 EUR</td>
             <td class="text-right">1,260</td>
           </tr>
@@ -386,6 +389,7 @@
             <td class="text-right">2,302</td>
             <td class="text-right text-bold">2,785</td>
             <td class="text-right">241,882 EUR</td>
+            <td class="text-right">241,882 EUR</td>
             <td class="text-right">1,047</td>
           </tr>
           <tr>
@@ -395,6 +399,7 @@
             <td class="text-right">14,121</td>
             <td class="text-right text-bold">16,711</td>
             <td class="text-right">18,889,104 MXN</td>
+            <td class="text-right">929,550 EUR</td>
             <td class="text-right">1,994</td>
           </tr>
           <tr>
@@ -404,10 +409,22 @@
             <td class="text-right">823</td>
             <td class="text-right text-bold">877</td>
             <td class="text-right">372,645 BRL</td>
+            <td class="text-right">63,883 EUR</td>
             <td class="text-right">2,296</td>
+          </tr>
+          <tr class="row-total">
+            <td>Total</td>
+            <td></td>
+            <td class="text-right">7,889</td>
+            <td class="text-right">22,812</td>
+            <td class="text-right">30,701</td>
+            <td class="text-right">—</td>
+            <td class="text-right">≈ 1,993,724 EUR</td>
+            <td class="text-right">10,747</td>
           </tr>
         </tbody>
       </table>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:-0.25rem;">EUR conversions at ECB reference rates, 2026-04-22 (1 EUR = 4.2468 PLN / 20.3207 MXN / 5.8333 BRL). Total untapped GMV/mo ≈ <strong>2.0M EUR</strong> (~24M EUR/year). Share of total: MX 47%, PL 30%, IT+ES ~20%, BR ~3%.</p>
 
       <h3>Key Observations</h3>
       <ul>
@@ -415,8 +432,78 @@
         <li><strong>Poland</strong> has the most balanced user/admin split (~50/50), ideal for Phase 1</li>
         <li><strong>Spain and Mexico</strong> are heavily admin-driven (4.8:1 and 5.5:1 ratio)</li>
         <li><strong>Brazil</strong> has very few user bookings (54) — almost entirely admin</li>
-        <li>At a conservative 20% conversion on PL user bookings: <strong>~260K PLN/month in new GMV</strong></li>
+        <li>At a conservative 20% conversion on PL user bookings: <strong>~260K PLN/month in new GMV</strong> (~61K EUR/mo)</li>
       </ul>
+
+      <h3>Platform TPV Impact — Current vs. With Price-From (same 30-day window)</h3>
+      <p style="font-size:0.85rem;color:#334155;margin-bottom:0.4rem;">"Current TPV" = all successful payins in the 30-day window (upfront + BNPL no-show fee + BNPL remaining). "Price from" services are excluded from the payment flow today, so the current figure equals fixed-price-only. With the feature shipped, the untapped PF GMV converts at some rate — we show the realistic Phase 1 target (20%) and the theoretical upper bound (100%).</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Country</th>
+            <th class="text-right">Current TPV/mo</th>
+            <th class="text-right">+ PF @ 20% (Phase 1 target)</th>
+            <th class="text-right">Δ%</th>
+            <th class="text-right">+ PF @ 100% (upper bound)</th>
+            <th class="text-right">Δ%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-bold">Poland</td>
+            <td class="text-right">8,888,803 PLN</td>
+            <td class="text-right">9,402,873 PLN</td>
+            <td class="text-right">+5.8%</td>
+            <td class="text-right">11,459,153 PLN</td>
+            <td class="text-right">+28.9%</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Italy</td>
+            <td class="text-right">360,939 EUR</td>
+            <td class="text-right">391,572 EUR</td>
+            <td class="text-right">+8.5%</td>
+            <td class="text-right">514,104 EUR</td>
+            <td class="text-right">+42.4%</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Spain</td>
+            <td class="text-right">371,857 EUR</td>
+            <td class="text-right">420,234 EUR</td>
+            <td class="text-right">+13.0%</td>
+            <td class="text-right">613,739 EUR</td>
+            <td class="text-right">+65.0%</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Mexico</td>
+            <td class="text-right">10,385,069 MXN</td>
+            <td class="text-right">14,162,890 MXN</td>
+            <td class="text-right">+36.4%</td>
+            <td class="text-right">29,274,173 MXN</td>
+            <td class="text-right">+181.9%</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Brazil</td>
+            <td class="text-right">3,911,502 BRL</td>
+            <td class="text-right">3,986,031 BRL</td>
+            <td class="text-right">+1.9%</td>
+            <td class="text-right">4,284,147 BRL</td>
+            <td class="text-right">+9.5%</td>
+          </tr>
+          <tr class="row-total">
+            <td>Total (EUR)</td>
+            <td class="text-right">≈ 4,007,459 EUR</td>
+            <td class="text-right">≈ 4,406,205 EUR</td>
+            <td class="text-right">+9.9%</td>
+            <td class="text-right">≈ 6,001,183 EUR</td>
+            <td class="text-right">+49.8%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight-box highlight-green">
+        <strong>Headline</strong>
+        <p>At the Phase 1 target conversion rate (20%), this feature lifts platform TPV by <strong>~10% overall</strong> — roughly <strong>+400K EUR/mo</strong> on top of the current ~4.0M EUR/mo base. The biggest per-market swings are <strong>MX (+36%)</strong> and <strong>ES (+13%)</strong>, driven by the admin-heavy booking mix in those countries. If PF conversion hits fixed-price levels (~47%, upper-bound territory), the uplift stretches toward <strong>+50%</strong>.</p>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:-0.25rem;">EUR conversions at ECB reference rates, 2026-04-22 (1 EUR = 4.2468 PLN / 20.3207 MXN / 5.8333 BRL). Local-currency per-country rows not summed (different currencies); EUR totals are the cross-country roll-up.</p>
 
       <h3>Poland — Fixed-Price Conversion Benchmark</h3>
       <div class="stat-grid">
