@@ -96,7 +96,7 @@
     <p>Doctors and clinics in <strong>Mexico</strong> and <strong>Brazil</strong> who want to use <strong>DP Payments</strong> via <strong>dLocal</strong> must pass a <strong>KYC-style</strong> flow. <strong>Step 2</strong> is where they upload proof of identity and (where applicable) tax or company registration documents.</p>
     <p>The <strong>REVPAY-6371</strong> cycle (scoped in <a href="https://github.com/DocPlanner/dp-payments-ai/pull/275">dp-payments-ai PR #275</a>) improves that step in <strong>two rollouts</strong>:</p>
     <ol>
-      <li><strong>Rollout 1 — Browser camera capture:</strong> users can <strong>capture documents in the browser with the device camera</strong> (take photo → preview → retake or confirm), reducing reliance on screenshots or poor-quality gallery photos.</li>
+      <li><strong>Rollout 1 — Browser camera capture:</strong> users can <strong>capture documents in the browser with the device camera</strong> (take photo → preview → retake or confirm), reducing reliance on screenshots or poor-quality gallery photos. <strong>Capability-based fallback:</strong> if the device has no camera available (e.g. a desktop without a webcam, or a browser with camera access blocked), the camera button is <strong>not rendered</strong> — users see only the existing file-upload path, with no degradation or error.</li>
       <li><strong>Rollout 2 — Document matrix:</strong>
         <ul>
           <li><strong>Document collection follows a clear matrix</strong> (individual vs company, MX vs BR), including an <strong>identity “picker”</strong> where more than one document type is acceptable (e.g. national ID <em>or</em> driving licence with front/back as required).</li>
