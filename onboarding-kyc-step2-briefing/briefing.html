@@ -93,15 +93,19 @@
     </p>
 
     <h2>1. What this initiative is about (short)</h2>
-    <p>Doctors and clinics in <strong>Mexico</strong> and <strong>Brazil</strong> who want marketplace payouts via <strong>dLocal</strong> must pass a <strong>KYC-style</strong> flow. <strong>Step 2</strong> is where they upload proof of identity and (where applicable) tax or company registration documents.</p>
-    <p>The <strong>REVPAY-6371</strong> cycle (scoped in <a href="https://github.com/DocPlanner/dp-payments-ai/pull/275">dp-payments-ai PR #275</a>) improves that step so that:</p>
-    <ul>
-      <li><strong>Document collection follows a clear matrix</strong> (individual vs company, MX vs BR), including an <strong>identity “picker”</strong> where more than one document type is acceptable (e.g. national ID <em>or</em> driving licence with front/back as required).</li>
-      <li><strong>Single-step uploads</strong> where only one document type applies (e.g. tax or incorporation), without a redundant type chooser.</li>
-      <li>The UI is <strong>driven by what dLocal still marks as pending</strong> for the account, so the customer always sees what is actually outstanding.</li>
-      <li>Users can <strong>capture documents in the browser with the device camera</strong> (take photo → preview → retake or confirm), reducing reliance on screenshots or poor-quality gallery photos.</li>
-      <li><strong>Rollout preference:</strong> ship <strong>Mexico and Brazil together</strong> in one logical release unless engineering flags a safety reason to stage.</li>
-    </ul>
+    <p>Doctors and clinics in <strong>Mexico</strong> and <strong>Brazil</strong> who want to use <strong>DP Payments</strong> via <strong>dLocal</strong> must pass a <strong>KYC-style</strong> flow. <strong>Step 2</strong> is where they upload proof of identity and (where applicable) tax or company registration documents.</p>
+    <p>The <strong>REVPAY-6371</strong> cycle (scoped in <a href="https://github.com/DocPlanner/dp-payments-ai/pull/275">dp-payments-ai PR #275</a>) improves that step in <strong>two rollouts</strong>:</p>
+    <ol>
+      <li><strong>Rollout 1 — Browser camera capture:</strong> users can <strong>capture documents in the browser with the device camera</strong> (take photo → preview → retake or confirm), reducing reliance on screenshots or poor-quality gallery photos.</li>
+      <li><strong>Rollout 2 — Document matrix:</strong>
+        <ul>
+          <li><strong>Document collection follows a clear matrix</strong> (individual vs company, MX vs BR), including an <strong>identity “picker”</strong> where more than one document type is acceptable (e.g. national ID <em>or</em> driving licence with front/back as required).</li>
+          <li><strong>Single-step uploads</strong> where only one document type applies (e.g. tax or incorporation), without a redundant type chooser.</li>
+          <li>The UI is <strong>driven by what dLocal still marks as pending</strong> for the account, so the customer always sees what is actually outstanding.</li>
+        </ul>
+      </li>
+    </ol>
+    <p><strong>Country rollout preference:</strong> within each rollout, ship <strong>Mexico and Brazil together</strong> unless engineering flags a safety reason to stage.</p>
     <div class="callout">
       <strong>Why it matters for ops:</strong> dLocal rejects many uploads flagged as <code>documents_screen_photo</code> (screen captures). Giving a <strong>first-class camera path</strong> and clearer document choice directly targets that failure mode.
     </div>
