@@ -91,7 +91,7 @@
     <h2>1. Executive summary</h2>
     <p>In Mexico, many patients already pay with <strong>cards saved in the Stripe wallet</strong> (one-click style pay-ins). Today the product cannot treat <strong>Stripe</strong> and <strong>dLocal</strong> wallets as <strong>two parallel, patient-safe</strong> capabilities without a deliberate design.</p>
     <p>If we <strong>enabled dLocal wallet</strong> in a way that <strong>automatically disabled Stripe wallet</strong>, patients who rely on saved Stripe cards would be pushed back to <strong>full card entry (e.g. Stripe Checkout)</strong> on every payment. That is a <strong>high-friction</strong> change at scale.</p>
-    <p><strong>Evidence from BroadDB (Mexico payments shard)</strong> shows non-trivial <strong>saved-card payment volume and TPV</strong> and meaningful <strong>repeat usage</strong> in 2026. The <strong>REVPAY-6358</strong> request (PR #255) describes <strong>multiple wallets</strong> (per customer provider, combined <code>/wallet</code>, dedupe, symmetric Stripe/dLocal behaviour) so we can <strong>add dLocal wallet without breaking Stripe wallet</strong> — protecting continuity of online pay-ins and reducing the risk of complaints, in-office payment substitution, and payment-setup churn.</p>
+    <p><strong>Evidence from BroadDB (Mexico payments shard)</strong> shows non-trivial <strong>saved-card payment volume and TPV</strong> and meaningful <strong>repeat usage</strong> in 2026. The <strong>REVPAY-6358</strong> request (PR #255) describes <strong>multiple wallets</strong> (per customer provider, combined <code>/wallet</code>, symmetric Stripe/dLocal behaviour) so we can <strong>add dLocal wallet without breaking Stripe wallet</strong> — protecting continuity of online pay-ins and reducing the risk of complaints, in-office payment substitution, and payment-setup churn.</p>
     <p>This document is <strong>evidence + narrative</strong>; PR #255 is the <strong>formal scope and acceptance criteria</strong> for delivery.</p>
 
     <hr />
@@ -102,6 +102,7 @@
       <li><strong>Avoid</strong> a “toggle” world where turning on dLocal wallet <strong>silently kills</strong> Stripe wallet for patients who already depend on it.</li>
     </ul>
     <p><strong>Why:</strong> continuity of payment experience, <strong>TPV protection</strong>, fewer support escalations to doctors, lower risk of moving clinics from mandatory to optional online payment.</p>
+    <div class="callout"><strong>Scope note — dual-wallet is a temporary continuity solution.</strong> The goal is to preserve recurrent visits already booked and paid with cards saved to the <strong>Stripe wallet</strong> while dLocal is rolled out. We will <strong>not</strong> dedupe cards across providers in <code>/wallet</code>: if the same physical card is added to both Stripe and dLocal, both entries will be shown. Cross-provider dedupe (deep PAN/fingerprint comparison, merging into a single visible card) is <strong>out of scope</strong> — it would be overkill for a non-permanent capability.</div>
 
     <hr />
 
@@ -229,7 +230,7 @@
           <tr>
             <td>“What breaks if we flip a single global switch?”</td>
             <td>Saved-card lane is <strong>economically meaningful</strong>; friction hits <strong>repeat payers</strong> hardest.</td>
-            <td>Request defines <strong>symmetric</strong> Stripe/dLocal behaviour, <strong>combined <code>/wallet</code></strong>, dedupe, and rollout considerations — aimed at <strong>no pay-in cliff</strong>.</td>
+            <td>Request defines <strong>symmetric</strong> Stripe/dLocal behaviour, <strong>combined <code>/wallet</code></strong>, and rollout considerations — aimed at <strong>no pay-in cliff</strong>. Cross-provider card dedupe is intentionally <strong>out of scope</strong> (temporary continuity solution).</td>
           </tr>
         </tbody>
       </table>

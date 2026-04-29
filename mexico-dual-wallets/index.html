@@ -38,7 +38,8 @@
 
     <div class="card">
       <p><strong>In one sentence:</strong> Many patients in Mexico already pay with cards saved in the <strong>Stripe wallet</strong>. Turning on a <strong>dLocal wallet</strong> in a way that <strong>disables</strong> Stripe wallet would push those users toward high-friction checkout and risks lower online TPV, more in-office payment, and doctor-facing complaints.</p>
-      <p><strong>What we want:</strong> A deliberate <strong>dual-wallet</strong> design (combined <code>/wallet</code>, per-customer-provider behaviour, dedupe) so dLocal can be added <strong>without</strong> breaking Stripe saved-card pay-ins.</p>
+      <p><strong>What we want:</strong> A deliberate <strong>dual-wallet</strong> design (combined <code>/wallet</code>, per-customer-provider behaviour) so dLocal can be added <strong>without</strong> breaking Stripe saved-card pay-ins.</p>
+      <p><strong>Scope note:</strong> Dual-wallet support is a <strong>temporary continuity solution</strong> to preserve recurrent visits booked and paid with cards already saved to the Stripe wallet. We will <strong>not</strong> dedupe cards across providers in <code>/wallet</code> — if the same card is added to both Stripe and dLocal, both entries will be shown. Cross-provider dedupe is <strong>out of scope</strong> because this is not designed as a long-term/permanent capability.</p>
     </div>
 
     <div class="card">

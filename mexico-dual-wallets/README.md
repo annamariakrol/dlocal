@@ -15,7 +15,9 @@ In Mexico, many patients already pay with **cards saved in the Stripe wallet** (
 
 If we **enabled dLocal wallet** in a way that **automatically disabled Stripe wallet**, patients who rely on saved Stripe cards would be pushed back to **full card entry (e.g. Stripe Checkout)** on every payment. That is a **high-friction** change at scale.
 
-**Evidence from BroadDB (Mexico payments shard)** shows non-trivial **saved-card payment volume and TPV** and meaningful **repeat usage** in 2026. The **REVPAY-6358** request (PR #255) describes **multiple wallets** (per customer provider, combined `/wallet`, dedupe, symmetric Stripe/dLocal behaviour) so we can **add dLocal wallet without breaking Stripe wallet** — protecting continuity of online pay-ins and reducing the risk of complaints, in-office payment substitution, and payment-setup churn.
+**Evidence from BroadDB (Mexico payments shard)** shows non-trivial **saved-card payment volume and TPV** and meaningful **repeat usage** in 2026. The **REVPAY-6358** request (PR #255) describes **multiple wallets** (per customer provider, combined `/wallet`, symmetric Stripe/dLocal behaviour) so we can **add dLocal wallet without breaking Stripe wallet** — protecting continuity of online pay-ins and reducing the risk of complaints, in-office payment substitution, and payment-setup churn.
+
+> **Scope note — dual-wallet is a temporary continuity solution.** The goal is to preserve recurrent visits already booked and paid with cards saved to the **Stripe wallet** while dLocal is rolled out. We will **not** dedupe cards across providers in `/wallet`: if the same physical card is added to both Stripe and dLocal, both entries will be shown. Cross-provider dedupe (deep PAN/fingerprint comparison, merging into a single visible card) is **out of scope** — it would be overkill for a non-permanent capability.
 
 This document is **evidence + narrative**; PR #255 is the **formal scope and acceptance criteria** for delivery.
 
@@ -133,7 +135,7 @@ TPV is the **sum of payment amounts** per calendar month (by payment date in the
 |--------------------|--------------------|-----------------------------------|
 | “Is Stripe wallet marginal?” | **No** — large authorised card base (~74k cards / ~68k patients). A **single** recent full month (e.g. **Mar 2026**) already shows **~7.6k** transactions and **~7.3M MXN** TPV from saved Stripe card pay-ins alone — **per month**, not year-to-date. | Dual-wallet design keeps Stripe wallet **alive** while dLocal wallet is introduced. |
 | “Do patients actually reuse saved cards?” | **Yes** — thousands of patients with **>1** booking on the **same** saved card in 2026 alone. | Per-payment / per-provider wallet rules avoid forcing everyone back to **full card entry**. |
-| “What breaks if we flip a single global switch?” | Saved-card lane is **economically meaningful**; friction hits **repeat payers** hardest. | Request defines **symmetric** Stripe/dLocal behaviour, **combined `/wallet`**, dedupe, and rollout considerations — aimed at **no pay-in cliff**. |
+| “What breaks if we flip a single global switch?” | Saved-card lane is **economically meaningful**; friction hits **repeat payers** hardest. | Request defines **symmetric** Stripe/dLocal behaviour, **combined `/wallet`**, and rollout considerations — aimed at **no pay-in cliff**. Cross-provider card dedupe is intentionally **out of scope** (temporary continuity solution). |
 
 **Important:** PR #255 is the **product request** (scope + AC). It **aligns** with the evidence above; **guaranteeing** no TPV disruption still depends on **implementation quality**, rollout gates, and monitoring in production.
 
